@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-950: #FAFAFA;
+  --color-dark-900: #FAFAFA;
+  --color-dark-850: #E5E7EB;
+  --color-dark-800: #FFFFFF;
+  --color-dark-700: #E5E7EB;
+  --color-dark-600: #6B7280;
+  
+  --color-sports-green: #2563EB; /* PRED-iT Accent Blue */
+  --color-sports-greenLight: #3B82F6;
+  --color-sports-greenDark: #1D4ED8;
+  
+  --color-sports-yellow: #F59E0B;
+  --color-sports-red: #DC2626;
+  --color-sports-blue: #2563EB;
+  --color-sports-blueDark: #1D4ED8;
+  --color-sports-gray: #6B7280;
+  --color-sports-border: #E5E7EB;
+  --color-sports-card: #FFFFFF;
+  
+  --color-slate-200: #111827;
+  --color-slate-300: #111827;
+  --color-slate-350: #111827;
+}
+
+@utility glass-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+@utility glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
+    transform: translateY(-2px);
+    background: #FFFFFF;
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.05), 0 2px 4px -2px rgba(37, 99, 235, 0.05);
+  }
+}
+
+@utility neon-glow {
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.1);
+}
+
+@utility sports-gradient {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+}
+
+@utility sports-gradient-hover {
+  &:hover {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  }
+}
+
+@utility dark-gradient {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%);
+}
+
+body {
+  background-color: #FAFAFA;
+  color: #111827;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+/* Custom styling for scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAFAFA;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}
+
+/* Custom transitions and other global utilities */
+.page-transition {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
