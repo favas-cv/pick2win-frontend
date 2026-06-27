@@ -24,22 +24,26 @@ export const AdminLayout = () => {
     return <Navigate to="/login/admin" replace />;
   }
 
-  if (user.role !== 'admin') {
+  if (user.role !== 'admin' && user.role !== 'club_admin') {
     if (user.role === 'club_owner') return <Navigate to="/owner/dashboard" replace />;
     return <Navigate to="/user/home" replace />;
   }
 
-  const menuItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/owners', label: 'Club Owners', icon: Users },
-    { path: '/admin/clubs', label: 'Clubs List', icon: Shield },
-    { path: '/admin/teams', label: 'Teams List', icon: Flag },
-    { path: '/admin/tournaments', label: 'Tournaments', icon: Trophy },
-    { path: '/admin/matches', label: 'Matches list', icon: Calendar },
-    { path: '/admin/results', label: 'Results entry', icon: CheckSquare },
-    { path: '/admin/leaderboards', label: 'Leaderboard boards', icon: Award },
-    { path: '/admin/analytics', label: 'Platform Analytics', icon: BarChart2 }
-  ];
+  const menuItems = user.role === 'club_admin' 
+    ? [
+        { path: '/admin/club-dashboard', label: 'Club Dashboard', icon: LayoutDashboard }
+      ]
+    : [
+        { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/admin/owners', label: 'Users', icon: Users },
+        { path: '/admin/clubs', label: 'Clubs List', icon: Shield },
+        { path: '/admin/teams', label: 'Teams List', icon: Flag },
+        { path: '/admin/tournaments', label: 'Tournaments', icon: Trophy },
+        { path: '/admin/matches', label: 'Matches list', icon: Calendar },
+        { path: '/admin/results', label: 'Results entry', icon: CheckSquare },
+        { path: '/admin/leaderboards', label: 'Leaderboard boards', icon: Award },
+        { path: '/admin/analytics', label: 'Platform Analytics', icon: BarChart2 }
+      ];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans">

@@ -36,8 +36,8 @@ export const LeaderboardCard = ({ userRank, isCurrentUser }) => {
   return (
     <div className={`flex items-center justify-between p-4 rounded-2xl border transition duration-200 ${
       isCurrentUser 
-        ? 'bg-sports-green/10 border-sports-green/30 shadow-lg shadow-sports-green/5' 
-        : 'glass-card border-slate-800/80 hover:border-slate-700/80'
+        ? 'bg-blue-50 border-blue-200 shadow-md shadow-blue-500/10' 
+        : 'bg-white border-slate-200 shadow-sm hover:border-slate-300'
     }`}>
       {/* Rank and User Details */}
       <div className="flex items-center gap-3">
@@ -47,24 +47,24 @@ export const LeaderboardCard = ({ userRank, isCurrentUser }) => {
         <img
           src={avatar || 'https://api.dicebear.com/7.x/pixel-art/svg'}
           alt={name}
-          className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800 object-cover shrink-0"
+          className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 object-cover shrink-0"
         />
         <div className="truncate">
           <span className={`text-sm font-bold block truncate max-w-[150px] ${
-            isCurrentUser ? 'text-sports-green' : 'text-slate-200'
+            isCurrentUser ? 'text-blue-700' : 'text-slate-900'
           }`}>
             {name}
-            {isCurrentUser && <span className="text-[9px] bg-sports-green/20 text-sports-green px-1.5 py-0.5 rounded-md ml-1.5">You</span>}
+            {isCurrentUser && <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.5 rounded-md ml-1.5 shadow-sm">You</span>}
           </span>
           <span className="text-[10px] text-sports-gray flex items-center gap-1 font-semibold">
-            <Zap className="w-3 h-3 text-sports-yellow" /> {accuracy}% Accuracy
+            <Zap className="w-3 h-3 text-amber-500" /> {accuracy}% Accuracy
           </span>
         </div>
       </div>
 
       {/* Points */}
       <div className="text-right shrink-0">
-        <span className="text-base font-black text-white">{points}</span>
+        <span className={`text-base font-black ${isCurrentUser ? 'text-blue-700' : 'text-slate-900'}`}>{points}</span>
         <span className="text-[9px] text-sports-gray uppercase font-bold tracking-wider block">Points</span>
       </div>
     </div>

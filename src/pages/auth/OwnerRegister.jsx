@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
+import { User, Phone, Lock, Key, Home, Compass, MapPin, AlignLeft, UserPlus, AlertCircle } from 'lucide-react';
 
 export const OwnerRegister = () => {
-  const { register: registerUser } = useAuth();
+  const { registerClubOwner } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,10 +16,23 @@ export const OwnerRegister = () => {
     setError('');
     setLoading(true);
     try {
-      await registerUser(data.name, data.email, data.password, 'club_owner');
-      navigate('/owner/dashboard');
+      await registerClubOwner({
+        name: data.name,
+        phone: data.phone,
+        password: data.password,
+        password2: data.password2,
+        club_name: data.club_name,
+        slug: data.slug,
+        place: data.place,
+        description: data.description
+      });
+      navigate('/login/owner');
     } catch (err) {
-      setError('Registration failed. Please check inputs and try again.');
+      setError(
+        err.response?.data 
+          ? Object.entries(err.response.data).map(([k, v]) => `${k}: ${v}`).join(', ') 
+          : 'Registration failed. Please check inputs and try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -29,7 +42,7 @@ export const OwnerRegister = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">Owner Registration</h2>
-        <p className="text-xs text-sports-gray mt-1">Register to start managing your own club and predicting leagues.</p>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Register to start managing your own club and predicting leagues.</p>
       </div>
 
       {error && (
@@ -57,21 +70,21 @@ export const OwnerRegister = () => {
           {errors.name && <span className="text-[10px] text-red-500 block mt-1">{errors.name.message}</span>}
         </div>
 
-        {/* Email */}
+        {/* Phone */}
         <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Email Address</label>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
-              <Mail className="w-4 h-4" />
+              <Phone className="w-4 h-4" />
             </span>
             <input
-              type="email"
-              placeholder="owner@brazilfans.com"
-              {...register('email', { required: 'Email is required' })}
+              type="text"
+              placeholder="+1234567890"
+              {...register('phone', { required: 'Phone is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
             />
           </div>
-          {errors.email && <span className="text-[10px] text-red-500 block mt-1">{errors.email.message}</span>}
+          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
         </div>
 
         {/* Password */}
@@ -94,10 +107,95 @@ export const OwnerRegister = () => {
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
         </div>
 
+        {/* Password 2 */}
+        <div>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Confirm Password</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
+              <Lock className="w-4 h-4" />
+            </span>
+            <input
+              type="password"
+              placeholder="••••••••"
+              {...register('password2', { required: 'Please confirm password' })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+            />
+          </div>
+          {errors.password2 && <span className="text-[10px] text-red-500 block mt-1">{errors.password2.message}</span>}
+        </div>
+
+        {/* Club Name */}
+        <div>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Club Name</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
+              <Home className="w-4 h-4" />
+            </span>
+            <input
+              type="text"
+              placeholder="Brazil Fans Club"
+              {...register('club_name', { required: 'Club name is required' })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+            />
+          </div>
+          {errors.club_name && <span className="text-[10px] text-red-500 block mt-1">{errors.club_name.message}</span>}
+        </div>
+
+        {/* Slug */}
+        <div>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Club Slug</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
+              <Compass className="w-4 h-4" />
+            </span>
+            <input
+              type="text"
+              placeholder="brazil-fans"
+              {...register('slug', { required: 'Slug is required' })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+            />
+          </div>
+          {errors.slug && <span className="text-[10px] text-red-500 block mt-1">{errors.slug.message}</span>}
+        </div>
+
+        {/* Place */}
+        <div>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Location / Place</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
+              <MapPin className="w-4 h-4" />
+            </span>
+            <input
+              type="text"
+              placeholder="Rio de Janeiro"
+              {...register('place', { required: 'Place/Location is required' })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+            />
+          </div>
+          {errors.place && <span className="text-[10px] text-red-500 block mt-1">{errors.place.message}</span>}
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Club Description</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 pt-3 text-sports-gray align-top">
+              <AlignLeft className="w-4 h-4" />
+            </span>
+            <textarea
+              placeholder="Tell us about the club..."
+              rows={3}
+              {...register('description', { required: 'Description is required' })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+            />
+          </div>
+          {errors.description && <span className="text-[10px] text-red-500 block mt-1">{errors.description.message}</span>}
+        </div>
+
         <div className="bg-blue-50 border border-blue-100 text-[11px] text-blue-600 p-3 rounded-xl flex items-start gap-2 leading-relaxed">
           <Key className="w-4.5 h-4.5 shrink-0 mt-0.5" />
           <span>
-            <strong>Note:</strong> Upon registration, your owner account is set to **Pending Approval**. You must be approved by a system administrator to manage tournaments.
+            <strong>Note:</strong> Upon registration, your owner account and club registration will be created instantly.
           </span>
         </div>
 

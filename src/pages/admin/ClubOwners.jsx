@@ -1,149 +1,164 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { Users, Check, X } from 'lucide-react';
-import ConfirmationModal from '../../components/common/ConfirmationModal';
+import React, { useState, useEffect } from 'react';
+import { adminService } from '../../services/adminService';
+import LoadingSkeleton from '../../components/common/LoadingSkeleton';
+import EmptyState from '../../components/common/EmptyState';
+import { Users, Phone, Trophy, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 export const ClubOwners = () => {
-  // Bind directly to global AuthContext state for real-time approvals!
-  const { owners, updateOwnerStatus } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedOwner, setSelectedOwner] = useState(null);
-  const [actionType, setActionType] = useState(''); // 'approve' | 'suspend' | 'reject'
-
-  const openActionModal = (owner, type) => {
-    setSelectedOwner(owner);
-    setActionType(type);
-    setModalOpen(true);
-  };
-
-  const handleConfirmAction = () => {
-    if (!selectedOwner) return;
-
-    let targetStatus = 'Pending';
-    if (actionType === 'approve') targetStatus = 'Approved';
-    else if (actionType === 'suspend') targetStatus = 'Suspended';
-    else if (actionType === 'reject') targetStatus = 'Rejected';
-
-    updateOwnerStatus(selectedOwner.id, targetStatus);
-    setModalOpen(false);
-    setSelectedOwner(null);
-  };
-
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case 'Approved':
-        return 'text-green-600 bg-green-50 border-green-200';
-      case 'Suspended':
-        return 'text-red-500 bg-red-50 border-red-100';
-      case 'Pending':
-      default:
-        return 'text-amber-500 bg-amber-50 border-amber-100';
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await adminService.getUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load users.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      (u.phone || '').includes(search)
+  );
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse" />
+        <LoadingSkeleton type="table" />
+      </div>
+    );
+  }
+
+  const activeCount = users.filter((u) => u.isActive).length;
+  const inactiveCount = users.filter((u) => !u.isActive).length;
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
-          <Users className="w-6 h-6 text-blue-600" /> Owner Registrations
-        </h1>
-        <p className="text-xs text-sports-gray mt-1">
-          Review and approve pending club owner request logs or suspend existing administrator credentials.
-        </p>
-      </div>
-
-      {/* Owners Table */}
-      <div className="glass-card border-slate-200 bg-white rounded-2xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-sports-gray font-bold uppercase tracking-wider text-[10px]">
-                <th className="py-4 px-6">Name</th>
-                <th className="py-4 px-6">Email</th>
-                <th className="py-4 px-6">Requested Club</th>
-                <th className="py-4 px-6 text-center">Status</th>
-                <th className="py-4 px-6 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 font-semibold text-slate-700">
-              {owners.map((owner) => (
-                <tr key={owner.id} className="hover:bg-slate-50/50 transition">
-                  <td className="py-4 px-6 font-bold text-slate-900">{owner.name}</td>
-                  <td className="py-4 px-6 text-sports-gray">{owner.email}</td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg shrink-0">{owner.logo}</span>
-                      <span>{owner.clubName}</span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-center">
-                    <span className={`px-2.5 py-0.5 rounded-lg border text-[10px] font-extrabold ${getStatusStyle(owner.status)}`}>
-                      {owner.status}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      {owner.status === 'Pending' && (
-                        <>
-                          <button
-                            onClick={() => openActionModal(owner, 'approve')}
-                            className="bg-green-50 hover:bg-green-600 text-green-600 hover:text-white p-1.5 rounded-lg border border-green-200 transition cursor-pointer"
-                            title="Approve Owner"
-                          >
-                            <Check className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => openActionModal(owner, 'reject')}
-                            className="bg-red-50 hover:bg-red-650 text-red-650 hover:text-white p-1.5 rounded-lg border border-red-200 transition cursor-pointer"
-                            title="Reject Request"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </>
-                      )}
-                      {owner.status === 'Approved' && (
-                        <button
-                          onClick={() => openActionModal(owner, 'suspend')}
-                          className="bg-red-50 hover:bg-red-600 hover:text-white text-red-500 px-3 py-1 rounded-lg border border-red-200 transition text-[10px] font-extrabold uppercase tracking-wide cursor-pointer"
-                        >
-                          Suspend
-                        </button>
-                      )}
-                      {owner.status === 'Suspended' && (
-                        <button
-                          onClick={() => openActionModal(owner, 'approve')}
-                          className="bg-green-50 hover:bg-green-600 hover:text-white text-green-600 px-3 py-1 rounded-lg border border-green-200 transition text-[10px] font-extrabold uppercase tracking-wide cursor-pointer"
-                        >
-                          Activate
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+            <Users className="w-6 h-6 text-sports-green" /> Users
+          </h1>
+          <p className="text-xs text-sports-gray mt-1">
+            View all platform users.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-black uppercase px-3 py-1 rounded-lg bg-sports-green/10 border border-sports-green/20 text-sports-green">
+            {activeCount} Active
+          </span>
+          <span className="text-[10px] font-black uppercase px-3 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400">
+            {inactiveCount} Inactive
+          </span>
         </div>
       </div>
 
-      {/* Confirmation Modal */}
-      {selectedOwner && (
-        <ConfirmationModal
-          isOpen={modalOpen}
-          title={
-            actionType === 'approve' ? 'Approve Club Owner?' :
-            actionType === 'suspend' ? 'Suspend Club Owner?' : 'Reject Owner Request?'
+      {/* Error Banner */}
+      {error && (
+        <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-400 font-semibold">
+          <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+        </div>
+      )}
+
+      {/* Search */}
+      {users.length > 0 && (
+        <div>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name or phone number…"
+            className="w-full sm:w-80 bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-600 focus:border-sports-green focus:outline-none transition"
+          />
+        </div>
+      )}
+
+      {/* Users Table */}
+      {filteredUsers.length > 0 ? (
+        <div className="glass-card border-slate-800 rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-900/60 border-b border-slate-800 text-[10px] text-sports-gray uppercase tracking-widest font-bold">
+                    <th className="py-3.5 px-5">Name</th>
+                    <th className="py-3.5 px-5">Phone</th>
+                    <th className="py-3.5 px-5">Points</th>
+                    <th className="py-3.5 px-5 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-850">
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="hover:bg-slate-900/30 transition">
+                    {/* Name */}
+                    <td className="py-4 px-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center shrink-0 text-xs font-black text-sports-green">
+                          {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <span className="font-extrabold text-sm text-sports-green block truncate">{user.name}</span>
+                      </div>
+                    </td>
+
+                    {/* Phone */}
+                    <td className="py-4 px-5 text-sports-gray font-semibold">
+                      <span className="flex items-center gap-1">
+                        <Phone className="w-3 h-3" />
+                        {user.phone || '—'}
+                      </span>
+                    </td>
+
+                    {/* Total Points */}
+                    <td className="py-4 px-5 text-center">
+                      <span className="flex items-center justify-center gap-1 font-extrabold text-white">
+                        <Trophy className="w-3.5 h-3.5 text-sports-yellow" />
+                        {user.totalPoints ?? 0}
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td className="py-4 px-5 text-center">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-[9px] font-extrabold uppercase ${
+                          user.isActive
+                            ? 'text-sports-green bg-sports-green/10 border-sports-green/20'
+                            : 'text-red-400 bg-red-500/10 border-red-500/20'
+                        }`}
+                      >
+                        {user.isActive ? (
+                          <><CheckCircle className="w-3 h-3" /> Active</>
+                        ) : (
+                          <><XCircle className="w-3 h-3" /> Inactive</>
+                        )}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <EmptyState
+          icon={Users}
+          title={search ? 'No Users Match Your Search' : 'No Users Found'}
+          description={
+            search ? 'Try a different search term.' : 'No users have registered on the platform yet.'
           }
-          message={`Are you sure you want to ${actionType} the club owner request for ${selectedOwner.name}?`}
-          confirmLabel={actionType.toUpperCase()}
-          isDanger={actionType !== 'approve'}
-          onConfirm={handleConfirmAction}
-          onCancel={() => {
-            setModalOpen(false);
-            setSelectedOwner(null);
-          }}
         />
       )}
     </div>

@@ -44,6 +44,7 @@ import AdminTournaments from './pages/admin/Tournaments';
 import AdminMatches from './pages/admin/Matches';
 import AdminResults from './pages/admin/Results';
 import AdminLeaderboard from './pages/admin/Leaderboard';
+import AdminClubDashboard from './pages/admin/ClubDashboard';
 import AdminAnalytics from './pages/admin/Analytics';
 
 // Role-based auth home checker
@@ -51,7 +52,6 @@ const CheckAuthHome = () => {
   const { user } = useAuth();
   
   if (!user) return <LandingPage />;
-  if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
   if (user.role === 'club_owner') return <Navigate to="/owner/dashboard" replace />;
   return <Navigate to="/user/home" replace />;
 };
@@ -106,6 +106,7 @@ function App() {
               <Route path="matches" element={<AdminMatches />} />
               <Route path="results" element={<AdminResults />} />
               <Route path="leaderboards" element={<AdminLeaderboard />} />
+              <Route path="club-dashboard" element={<AdminClubDashboard />} />
               <Route path="analytics" element={<AdminAnalytics />} />
             </Route>
 

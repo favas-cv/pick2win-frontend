@@ -1,40 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useClub } from '../../context/ClubContext';
 import { clubService } from '../../services/clubService';
 import InviteLinkCard from '../../components/club/InviteLinkCard';
-import LoadingSkeleton from '../../components/common/LoadingSkeleton';
-import { Link2 } from 'lucide-react';
+import { Link2, RefreshCw } from 'lucide-react';
 
 export const InviteLink = () => {
   const { activeClub } = useClub();
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchInvites = async () => {
-      if (!activeClub) return;
-      setLoading(true);
-      try {
-        const stats = await clubService.getClubOwnerDashboard(activeClub.id);
-        setData(stats);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+  const handleGenerateLink = async () => {
+    if (!activeClub) return;
+    setLoading(true);
+    try {
+      const response = await clubService.generateInviteLink(activeClub.id);
+      const inviteLink = response.invite_link || response.token;
+      let token = response.token;
+      if (inviteLink && inviteLink.includes('token=')) {
+        token = inviteLink.split('token=')[1];
       }
-    };
-
-    fetchInvites();
-  }, [activeClub]);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse"></div>
-        <LoadingSkeleton type="table" />
-      </div>
-    );
-  }
+      setData({
+        inviteCode: token || inviteLink, // Map backend token to inviteCode/regToken for UI
+        registrationToken: token || inviteLink,
+      });
+    } catch (err) {
+      console.error('Failed to generate invite link:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -48,8 +42,19 @@ export const InviteLink = () => {
         </p>
       </div>
 
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleGenerateLink}
+          disabled={loading}
+          className="bg-sports-green hover:bg-sports-greenDark text-black font-extrabold text-sm px-5 py-3 rounded-xl transition flex items-center gap-2 disabled:opacity-50"
+        >
+          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+          <span>{loading ? 'Generating...' : 'Generate New Link'}</span>
+        </button>
+      </div>
+
       {data && (
-        <div className="w-full">
+        <div className="w-full mt-6 animate-fadeIn">
           <InviteLinkCard inviteCode={data.inviteCode} regToken={data.registrationToken} />
         </div>
       )}

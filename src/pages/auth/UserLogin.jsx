@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
+import { Phone, Lock, LogIn, AlertCircle } from 'lucide-react';
 
 export const UserLogin = () => {
   const { login } = useAuth();
@@ -10,24 +10,19 @@ export const UserLogin = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
     setError('');
     setLoading(true);
     try {
-      await login(data.email, data.password, 'user');
+      await login(data.phone, data.password, 'user');
       navigate('/user/home');
     } catch (err) {
-      setError('Invalid user credentials.');
+      setError(err.response?.data?.error || 'Invalid user credentials.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickLogin = () => {
-    setValue('email', 'john.doe@gmail.com');
-    setValue('password', 'user123');
   };
 
   return (
@@ -45,21 +40,21 @@ export const UserLogin = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Email */}
+        {/* Phone */}
         <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Email Address</label>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
-              <Mail className="w-4 h-4" />
+              <Phone className="w-4 h-4" />
             </span>
             <input
-              type="email"
-              placeholder="example@mail.com"
-              {...register('email', { required: 'Email is required' })}
+              type="text"
+              placeholder="+1234567890"
+              {...register('phone', { required: 'Phone number is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
             />
           </div>
-          {errors.email && <span className="text-[10px] text-red-500 block mt-1">{errors.email.message}</span>}
+          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
         </div>
 
         {/* Password */}
@@ -96,16 +91,6 @@ export const UserLogin = () => {
           )}
         </button>
       </form>
-
-      {/* Quick login */}
-      <div className="border-t border-slate-200 pt-4">
-        <button
-          onClick={handleQuickLogin}
-          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition border border-slate-200"
-        >
-          Use Mock User Account
-        </button>
-      </div>
 
       <div className="text-center text-xs space-y-2">
         <p className="text-sports-gray">

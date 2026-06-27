@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { matchService } from '../../services/matchService';
+import { adminService } from '../../services/adminService';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { Calendar, Plus, Save, MapPin } from 'lucide-react';
+import { Calendar, Plus, Save, Lock, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+
+const statusStyle = (status) => {
+  switch (status) {
+    case 'Completed':
+      return 'text-sports-gray bg-slate-900 border-slate-800';
+    case 'Live':
+      return 'text-red-400 bg-red-500/10 border-red-500/20';
+    default:
+      return 'text-sports-green bg-sports-green/10 border-sports-green/20';
+  }
+};
 
 export const Matches = () => {
   const [matches, setMatches] = useState([]);
@@ -11,22 +22,26 @@ export const Matches = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   const fetchData = async () => {
     setLoading(true);
+    setError('');
     try {
       const [matchesList, tournamentsList, teamsList] = await Promise.all([
-        matchService.getMatches(),
-        matchService.getTournaments(),
-        matchService.getTeams()
+        adminService.getMatches(),
+        adminService.getTournaments(),
+        adminService.getTeams(),
       ]);
       setMatches(matchesList);
       setTournaments(tournamentsList);
       setTeams(teamsList);
     } catch (err) {
       console.error(err);
+      setError('Failed to load match data.');
     } finally {
       setLoading(false);
     }
@@ -37,28 +52,32 @@ export const Matches = () => {
   }, []);
 
   const onSubmit = async (data) => {
+    setSubmitting(true);
     try {
-      const payload = {
-        tournamentId: data.tournamentId,
-        teamAId: data.teamAId,
-        teamBId: data.teamBId,
-        kickoffTime: new Date(data.kickoffTime).toISOString(),
-        venue: data.venue
-      };
-      
-      const newMatch = await matchService.createMatch(payload);
-      setMatches(prev => [newMatch, ...prev]);
+      const newMatch = await adminService.createMatch({
+        tournamentId: parseInt(data.tournamentId),
+        homeTeamId: parseInt(data.homeTeamId),
+        awayTeamId: parseInt(data.awayTeamId),
+        kickoff: new Date(data.kickoff).toISOString(),
+        predictionLockTime: data.predictionLockTime
+          ? new Date(data.predictionLockTime).toISOString()
+          : new Date(data.kickoff).toISOString(),
+      });
+      setMatches((prev) => [newMatch, ...prev]);
       setShowForm(false);
       reset();
     } catch (err) {
       console.error(err);
+      setError('Failed to schedule match. Please check your inputs.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse"></div>
+        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse" />
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -73,76 +92,118 @@ export const Matches = () => {
             <Calendar className="w-6 h-6 text-sports-green" /> Match Governance
           </h1>
           <p className="text-xs text-sports-gray mt-1">
-            Schedule new matches, verify kickoff venues, and manage lineups.
+            Schedule new matches and manage fixture listings.
           </p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { setShowForm(!showForm); setError(''); }}
           className="bg-sports-green hover:bg-sports-greenDark text-black text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95 shrink-0"
         >
           <Plus className="w-4 h-4" /> {showForm ? 'Cancel' : 'Schedule Match'}
         </button>
       </div>
 
-      {/* Creation form */}
+      {/* Error Banner */}
+      {error && (
+        <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-400 font-semibold">
+          <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+        </div>
+      )}
+
+      {/* Creation Form */}
       {showForm && (
         <div className="glass-card border-slate-800 rounded-2xl p-6 animate-fadeIn">
           <h3 className="text-sm font-black text-white uppercase tracking-wider mb-4 border-b border-slate-850 pb-2">
             Schedule New Matchup
           </h3>
           <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Tournament */}
             <div>
-              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">Select Tournament</label>
+              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">
+                Tournament *
+              </label>
               <select
                 {...register('tournamentId', { required: 'Tournament is required' })}
                 className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
               >
-                {tournaments.map(t => (
-                  <option key={t.id} value={t.id} className="bg-slate-900 text-white">{t.logo} {t.name}</option>
+                <option value="" className="bg-slate-900">— Select Tournament —</option>
+                {tournaments.map((t) => (
+                  <option key={t.id} value={t.id} className="bg-slate-900">
+                    {t.name}
+                  </option>
                 ))}
               </select>
+              {errors.tournamentId && (
+                <span className="text-[9px] text-red-400 block mt-1">{errors.tournamentId.message}</span>
+              )}
             </div>
 
+            {/* Kickoff */}
             <div>
-              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">Venue</label>
-              <input
-                type="text"
-                placeholder="e.g. Maracanã Stadium"
-                {...register('venue', { required: 'Venue is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-650 focus:border-sports-green focus:outline-none transition"
-              />
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">Team A (Home)</label>
-              <select
-                {...register('teamAId', { required: 'Team A is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
-              >
-                {teams.map(t => (
-                  <option key={t.id} value={t.id} className="bg-slate-900 text-white">{t.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">Team B (Away)</label>
-              <select
-                {...register('teamBId', { required: 'Team B is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
-              >
-                {teams.map(t => (
-                  <option key={t.id} value={t.id} className="bg-slate-900 text-white">{t.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">Kickoff Date & Time</label>
+              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">
+                Kickoff Date & Time *
+              </label>
               <input
                 type="datetime-local"
-                required
-                {...register('kickoffTime', { required: 'Kickoff time is required' })}
+                {...register('kickoff', { required: 'Kickoff time is required' })}
+                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white focus:border-sports-green focus:outline-none transition"
+              />
+              {errors.kickoff && (
+                <span className="text-[9px] text-red-400 block mt-1">{errors.kickoff.message}</span>
+              )}
+            </div>
+
+            {/* Home Team */}
+            <div>
+              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">
+                Home Team *
+              </label>
+              <select
+                {...register('homeTeamId', { required: 'Home team is required' })}
+                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
+              >
+                <option value="" className="bg-slate-900">— Select Home Team —</option>
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id} className="bg-slate-900">
+                    {t.name} {t.countryCode ? `(${t.countryCode})` : ''}
+                  </option>
+                ))}
+              </select>
+              {errors.homeTeamId && (
+                <span className="text-[9px] text-red-400 block mt-1">{errors.homeTeamId.message}</span>
+              )}
+            </div>
+
+            {/* Away Team */}
+            <div>
+              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">
+                Away Team *
+              </label>
+              <select
+                {...register('awayTeamId', { required: 'Away team is required' })}
+                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
+              >
+                <option value="" className="bg-slate-900">— Select Away Team —</option>
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id} className="bg-slate-900">
+                    {t.name} {t.countryCode ? `(${t.countryCode})` : ''}
+                  </option>
+                ))}
+              </select>
+              {errors.awayTeamId && (
+                <span className="text-[9px] text-red-400 block mt-1">{errors.awayTeamId.message}</span>
+              )}
+            </div>
+
+            {/* Prediction Lock Time */}
+            <div className="md:col-span-2">
+              <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1">
+                Prediction Lock Time{' '}
+                <span className="normal-case text-slate-500 font-normal">(defaults to kickoff time)</span>
+              </label>
+              <input
+                type="datetime-local"
+                {...register('predictionLockTime')}
                 className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white focus:border-sports-green focus:outline-none transition"
               />
             </div>
@@ -157,54 +218,91 @@ export const Matches = () => {
               </button>
               <button
                 type="submit"
-                className="bg-sports-green hover:bg-sports-greenDark text-black text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
+                disabled={submitting}
+                className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-black text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
               >
-                <Save className="w-4 h-4" /> Save Matchup
+                <Save className="w-4 h-4" />
+                {submitting ? 'Saving…' : 'Save Match'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Matches listing */}
-      <div className="space-y-4">
-        {matches.map((match) => (
-          <div 
-            key={match.id}
-            className="glass-card border-slate-800 rounded-2xl p-5 hover:border-slate-705 flex items-center justify-between gap-6"
-          >
-            <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider">
-                  {match.tournamentName}
-                </span>
+      {/* Matches List */}
+      {matches.length > 0 ? (
+        <div className="space-y-3">
+          {matches.map((match) => (
+            <div
+              key={match.id}
+              className="glass-card border-slate-800 rounded-2xl p-5 hover:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition duration-200"
+            >
+              {/* Left: tournament + teams */}
+              <div className="flex-1 min-w-0">
+                {match.tournament && (
+                  <span className="text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider">
+                    {match.tournament.name}
+                  </span>
+                )}
                 <div className="flex items-center gap-2 mt-2 font-extrabold text-sm text-white">
-                  <span>{match.teamA.name}</span>
+                  <span>{match.homeTeam?.name ?? '—'}</span>
                   <span className="text-sports-gray font-normal text-xs">vs</span>
-                  <span>{match.teamB.name}</span>
+                  <span>{match.awayTeam?.name ?? '—'}</span>
+                </div>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <span className="flex items-center gap-1 text-[10px] text-sports-gray font-semibold">
+                    <Clock className="w-3 h-3" />
+                    {match.kickoff
+                      ? new Date(match.kickoff).toLocaleString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : '—'}
+                  </span>
+                  {match.predictionLockTime && (
+                    <span className="flex items-center gap-1 text-[10px] text-sports-gray font-semibold">
+                      <Lock className="w-3 h-3" />
+                      Lock:{' '}
+                      {new Date(match.predictionLockTime).toLocaleString('en-GB', {
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  )}
                 </div>
               </div>
-              
-              <div className="text-left sm:text-right font-semibold text-xs text-sports-gray">
-                <span className="flex items-center sm:justify-end gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-sports-green" /> {match.venue}
-                </span>
-                <span className="block mt-1 font-bold text-[10px] text-slate-350">
-                  Kickoff: {new Date(match.kickoffTime).toLocaleString()}
+
+              {/* Right: score + status */}
+              <div className="flex items-center gap-3 shrink-0">
+                {match.isFinished && match.homeScore !== null && (
+                  <div className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-center">
+                    <span className="text-base font-black text-white">
+                      {match.homeScore} – {match.awayScore}
+                    </span>
+                    <span className="text-[9px] text-sports-gray block mt-0.5 font-bold uppercase">Final</span>
+                  </div>
+                )}
+                <span
+                  className={`px-2.5 py-0.5 rounded-lg border text-[9px] font-extrabold uppercase ${statusStyle(match.status)}`}
+                >
+                  {match.status}
                 </span>
               </div>
             </div>
-
-            <span className={`px-2.5 py-0.5 rounded-lg border text-[9px] font-extrabold uppercase shrink-0 ${
-              match.status === 'Completed' ? 'text-sports-gray bg-slate-900 border-slate-800' :
-              match.status === 'Live' ? 'text-red-500 bg-red-500/10 border-red-500/20' :
-              'text-sports-green bg-sports-green/10 border-sports-green/20'
-            }`}>
-              {match.status}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon={Calendar}
+          title="No Matches Scheduled"
+          description="No matches have been created yet. Schedule the first fixture!"
+        />
+      )}
     </div>
   );
 };

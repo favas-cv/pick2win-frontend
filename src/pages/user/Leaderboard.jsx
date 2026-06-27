@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useClub } from '../../context/ClubContext';
 import { useAuth } from '../../context/AuthContext';
 import { predictionService } from '../../services/predictionService';
+import { matchService } from '../../services/matchService';
 import LeaderboardCard from '../../components/leaderboard/LeaderboardCard';
 import UserRankCard from '../../components/leaderboard/UserRankCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
@@ -10,24 +11,31 @@ import { Award, ShieldAlert } from 'lucide-react';
 
 export const Leaderboard = () => {
   const { user } = useAuth();
-  const { activeClub, memberships } = useClub();
+  const { activeClub } = useClub();
   const [board, setBoard] = useState([]);
+  const [tournaments, setTournaments] = useState([]);
+  const [selectedTournament, setSelectedTournament] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check membership status
-  const activeMembership = memberships.find(m => m.clubId === activeClub?.id && m.email === user?.email);
-  const isApproved = activeMembership?.status === 'Approved';
+  const isApproved = !!activeClub;
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      if (!activeClub || !isApproved) {
-        setLoading(false);
-        return;
-      }
+    const fetchTournamentsAndLeaderboard = async () => {
       setLoading(true);
       try {
-        const ranking = await predictionService.getLeaderboard(activeClub.id);
-        setBoard(ranking);
+        const allTournaments = await matchService.getTournaments();
+        setTournaments(allTournaments);
+
+        let tId = selectedTournament;
+        if (!tId && allTournaments.length > 0) {
+          tId = allTournaments[0].id;
+          setSelectedTournament(allTournaments[0].id);
+        }
+
+        if (tId && activeClub) {
+          const ranking = await predictionService.getLeaderboard(activeClub.id, tId);
+          setBoard(ranking);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -35,8 +43,8 @@ export const Leaderboard = () => {
       }
     };
 
-    fetchLeaderboard();
-  }, [activeClub, isApproved]);
+    fetchTournamentsAndLeaderboard();
+  }, [activeClub, selectedTournament]);
 
   if (loading) {
     return (
@@ -48,38 +56,41 @@ export const Leaderboard = () => {
     );
   }
 
-  if (!isApproved) {
-    return (
-      <div className="max-w-md mx-auto py-12 px-4 text-center space-y-6">
-        <div className="w-16 h-16 bg-amber-50 border border-amber-100 text-amber-500 rounded-2xl flex items-center justify-center mx-auto shadow-md">
-          <ShieldAlert className="w-8 h-8" />
-        </div>
-        <div>
-          <h2 className="text-xl font-black text-slate-900">Awaiting Club Approval</h2>
-          <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-            You must be approved by the club owner in <span className="font-bold text-slate-800">{activeClub?.name}</span> to view rankings.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const currentUserStandings = board.find(u => u.name === user?.name) || {
-    rank: 4,
-    points: 98,
-    accuracy: 55
+  const currentUserStandings = board.find(u => u.userId === user?.id) || {
+    rank: '-',
+    points: 0,
+    accuracy: 100
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
-          <Award className="w-6 h-6 text-blue-600" /> Leaderboard Rankings
-        </h1>
-        <p className="text-xs text-sports-gray mt-1 font-semibold">
-          Rank standings inside the <span className="font-bold text-slate-700">{activeClub?.name}</span>.
-        </p>
+      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
+            <Award className="w-6 h-6 text-blue-600" /> Leaderboard Rankings
+          </h1>
+          <p className="text-xs text-sports-gray mt-1 font-semibold">
+            Rank standings inside the <span className="font-bold text-slate-700">{activeClub?.name}</span>.
+          </p>
+        </div>
+
+        {tournaments.length > 0 && (
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-bold text-slate-650 uppercase tracking-wide">Tournament:</label>
+            <select
+              value={selectedTournament || ''}
+              onChange={(e) => setSelectedTournament(Number(e.target.value))}
+              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-600 transition"
+            >
+              {tournaments.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {board.length > 0 ? (
@@ -97,7 +108,7 @@ export const Leaderboard = () => {
                 <LeaderboardCard
                   key={userRank.rank}
                   userRank={userRank}
-                  isCurrentUser={userRank.name === user?.name || userRank.name === 'John Doe'}
+                  isCurrentUser={userRank.userId === user?.id}
                 />
               ))}
             </div>

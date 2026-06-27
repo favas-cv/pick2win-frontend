@@ -16,7 +16,7 @@ export const AdminLogin = () => {
     setError('');
     setLoading(true);
     try {
-      await login(data.email, data.password, 'admin');
+      await login(data.phone, data.password, 'admin');
       navigate('/admin/dashboard');
     } catch (err) {
       setError('Invalid admin credentials.');
@@ -26,7 +26,7 @@ export const AdminLogin = () => {
   };
 
   const handleQuickLogin = () => {
-    setValue('email', 'admin@predit.com');
+    setValue('phone', '7306656998');
     setValue('password', 'admin123');
   };
 
@@ -45,21 +45,21 @@ export const AdminLogin = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Email */}
+        {/* Phone */}
         <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Email Address</label>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
               <Mail className="w-4 h-4" />
             </span>
             <input
-              type="email"
-              placeholder="admin@predit.com"
-              {...register('email', { required: 'Email is required' })}
+              type="text"
+              placeholder="7306656998"
+              {...register('phone', { required: 'Phone is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
             />
           </div>
-          {errors.email && <span className="text-[10px] text-red-500 block mt-1">{errors.email.message}</span>}
+          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
         </div>
 
         {/* Password */}

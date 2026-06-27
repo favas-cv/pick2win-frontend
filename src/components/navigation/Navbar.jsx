@@ -2,17 +2,18 @@ import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ClubSelector from '../club/ClubSelector';
-import { Trophy, LogOut, LayoutDashboard, Home, Award } from 'lucide-react';
+import { Trophy, LogOut, LayoutDashboard, Home, Award, User } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
 
   const getNavLinks = () => {
-    if (user?.role === 'user') {
+    if (user?.role === 'user' || user?.role === 'club_admin') {
       return [
         { path: '/user/home', label: 'Home', icon: Home },
         { path: '/user/tournaments', label: 'Tournaments', icon: Trophy },
-        { path: '/user/leaderboard', label: 'Leaderboard', icon: Award }
+        { path: '/user/leaderboard', label: 'Leaderboard', icon: Award },
+        { path: '/user/profile', label: 'Profile', icon: User }
       ];
     }
     return [];
@@ -32,7 +33,7 @@ export const Navbar = () => {
             </span>
           </Link>
 
-          {user && (user.role === 'user' || user.role === 'club_owner') && (
+          {user && (user.role === 'user' || user.role === 'club_owner' || user.role === 'club_admin') && (
             <div className="border-l border-slate-200 pl-4">
               <ClubSelector />
             </div>
@@ -40,7 +41,7 @@ export const Navbar = () => {
         </div>
 
         {/* Center: Desktop Navigation */}
-        {user && user.role === 'user' && (
+        {user && (user.role === 'user' || user.role === 'club_admin') && (
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map(({ path, label }) => (
               <NavLink

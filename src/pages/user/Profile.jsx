@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useClub } from '../../context/ClubContext';
+import authService from '../../services/authService';
 import { predictionService } from '../../services/predictionService';
-import ProfileCard from '../../components/profile/ProfileCard';
 import PredictionCard from '../../components/match/PredictionCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { User, History, Settings, Key, ShieldCheck, Mail, LogOut, CheckCircle } from 'lucide-react';
+import { User, Shield, Phone, Hash, Award, Calendar, LogOut, History } from 'lucide-react';
 
 export const Profile = () => {
   const { user, logout } = useAuth();
-  const { activeClub, clubs } = useClub();
-  
+  const [profile, setProfile] = useState(null);
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile' | 'history' | 'settings'
-
-  // Settings mock state
-  const [notifyEmail, setNotifyEmail] = useState(true);
-  const [notifyMatchClose, setNotifyMatchClose] = useState(true);
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      if (!user) return;
+    const fetchProfileAndHistory = async () => {
       setLoading(true);
       try {
-        const history = await predictionService.getUserPredictionsHistory(user.id);
-        setPredictions(history);
+        const [profileData, historyData] = await Promise.all([
+          authService.getProfile(),
+          predictionService.getUserPredictionsHistory()
+        ]);
+        setProfile(profileData);
+        setPredictions(historyData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -34,148 +31,117 @@ export const Profile = () => {
       }
     };
 
-    fetchHistory();
-  }, [user]);
+    fetchProfileAndHistory();
+  }, []);
 
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="h-44 bg-slate-900 border border-slate-800 rounded-2xl animate-pulse"></div>
-        <LoadingSkeleton type="table" />
+        <LoadingSkeleton type="card" />
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Profile Header */}
-      {user && (
-        <ProfileCard 
-          user={user} 
-          activeClub={activeClub} 
-          joinedClubsCount={user.role === 'user' ? user.joinedClubs?.length || 1 : 1} 
-        />
-      )}
+  if (!profile) {
+    return <div className="text-white text-center py-10">Failed to load profile.</div>;
+  }
 
-      {/* Tabs */}
-      <div className="border-b border-slate-850 flex gap-6 text-sm font-bold">
-        <button
-          onClick={() => setActiveTab('profile')}
-          className={`pb-3 transition relative flex items-center gap-1.5 ${
-            activeTab === 'profile' ? 'text-sports-green' : 'text-sports-gray hover:text-white'
-          }`}
-        >
-          <User className="w-4 h-4" /> Profile Info
-          {activeTab === 'profile' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-sports-green"></span>}
-        </button>
-        <button
-          onClick={() => setActiveTab('history')}
-          className={`pb-3 transition relative flex items-center gap-1.5 ${
-            activeTab === 'history' ? 'text-sports-green' : 'text-sports-gray hover:text-white'
-          }`}
-        >
-          <History className="w-4 h-4" /> Prediction History ({predictions.length})
-          {activeTab === 'history' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-sports-green"></span>}
-        </button>
-        <button
-          onClick={() => setActiveTab('settings')}
-          className={`pb-3 transition relative flex items-center gap-1.5 ${
-            activeTab === 'settings' ? 'text-sports-green' : 'text-sports-gray hover:text-white'
-          }`}
-        >
-          <Settings className="w-4 h-4" /> Settings
-          {activeTab === 'settings' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-sports-green"></span>}
-        </button>
+  const { club } = profile;
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
+      {/* User Info Card */}
+      <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-sports-green/5 border border-sports-green/10 rounded-full translate-x-12 -translate-y-12"></div>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="w-24 h-24 rounded-full border-2 border-sports-green bg-slate-900 flex items-center justify-center text-4xl shadow-lg shadow-sports-green/10 shrink-0">
+            👤
+          </div>
+          <div className="text-center sm:text-left space-y-2 flex-1">
+            <h2 className="text-2xl font-black text-white leading-tight capitalize">{profile.name}</h2>
+            
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sports-gray text-xs font-semibold">
+              <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> {profile.phone}</span>
+              <span className="flex items-center gap-1"><Hash className="w-3.5 h-3.5" /> {profile.username}</span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2">
+              <span className="text-[10px] bg-slate-900 border border-slate-850 px-3 py-1 rounded-xl text-slate-300 font-bold uppercase tracking-wider flex items-center gap-1">
+                <Shield className="w-3 h-3 text-sports-green" /> {profile.role}
+              </span>
+              {profile.role === 'club_admin' && (
+                <Link to="/owner/dashboard" className="text-[10px] bg-sports-green/10 border border-sports-green/20 px-3 py-1 rounded-xl text-sports-green font-bold uppercase tracking-wider hover:bg-sports-green/20 transition">
+                  Club Admin
+                </Link>
+              )}
+              <span className="text-[10px] bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-xl text-amber-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                <Award className="w-3 h-3" /> {profile.total_points} Points
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Tab Panels */}
-      <div className="space-y-4">
-        {activeTab === 'profile' && (
-          <div className="glass-card border-slate-800 rounded-2xl p-6 space-y-6">
-            <h3 className="text-base font-bold text-white border-b border-slate-850 pb-2">Clubs Enrolled</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {clubs.map((club) => (
-                <div key={club.id} className="bg-slate-900/60 border border-slate-850 p-4 rounded-xl flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-2xl">{club.logo}</span>
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-200">{club.name}</h4>
-                      <span className="text-[10px] text-sports-gray block">{club.membersCount} Members</span>
-                    </div>
-                  </div>
-                  {activeClub?.id === club.id && (
-                    <span className="text-[9px] bg-sports-green/10 text-sports-green px-2 py-0.5 border border-sports-green/20 rounded-md font-bold">
-                      ACTIVE
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'history' && (
-          predictions.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
-              {predictions.map((pred) => (
-                <PredictionCard key={pred.id} prediction={pred} />
-              ))}
-            </div>
-          ) : (
-            <EmptyState 
-              icon={History}
-              title="No predictions yet" 
-              description="You have not submitted any matchup predictions. Go to the Home dashboard to make predictions!" 
-            />
-          )
-        )}
-
-        {activeTab === 'settings' && (
-          <div className="glass-card border-slate-800 rounded-2xl p-6 space-y-6">
-            <div>
-              <h3 className="text-base font-bold text-white border-b border-slate-850 pb-2">Notification Settings</h3>
-              <div className="space-y-4 mt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-bold text-slate-250 block">Email Newsletters</label>
-                    <span className="text-xs text-sports-gray">Receive updates on club leaderboards and standings.</span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={notifyEmail}
-                    onChange={(e) => setNotifyEmail(e.target.checked)}
-                    className="w-4 h-4 rounded text-sports-green accent-sports-green focus:ring-0 focus:outline-none"
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-bold text-slate-250 block">Match Kickoff Alerts</label>
-                    <span className="text-xs text-sports-gray">Notify me 30 minutes before predictions lock.</span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={notifyMatchClose}
-                    onChange={(e) => setNotifyMatchClose(e.target.checked)}
-                    className="w-4 h-4 rounded text-sports-green accent-sports-green focus:ring-0 focus:outline-none"
-                  />
-                </div>
+      {/* Club Info Card */}
+      {club && (
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Active Club</h3>
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-xl">
+                ⚽
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-slate-900 capitalize">{club.name}</h4>
+                <p className="text-xs text-sports-gray font-semibold">{club.place}</p>
               </div>
             </div>
-
-            <div>
-              <h3 className="text-base font-bold text-white border-b border-slate-850 pb-2">Account Actions</h3>
-              <div className="mt-4 flex gap-4">
-                <button
-                  onClick={logout}
-                  className="bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs font-bold px-4 py-2.5 rounded-xl border border-red-500/20 transition flex items-center gap-1.5"
-                >
-                  <LogOut className="w-4 h-4" /> Sign Out of Account
-                </button>
-              </div>
+            
+            <div className="text-left sm:text-right space-y-1">
+              <span className="text-[10px] bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-lg font-bold uppercase tracking-wider block">
+                {club.member_role}
+              </span>
+              <span className="text-[10px] text-slate-400 font-semibold flex items-center sm:justify-end gap-1">
+                <Calendar className="w-3 h-3" /> Joined {new Date(club.joined_at).toLocaleDateString()}
+              </span>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Prediction History Section */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <History className="w-5 h-5 text-sports-gray" />
+          <h3 className="text-lg font-black text-white">Prediction History</h3>
+        </div>
+        
+        {predictions.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4">
+            {predictions.map((pred) => (
+              <PredictionCard key={pred.id} prediction={pred} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState 
+            icon={History}
+            title="No predictions yet" 
+            description="You have not submitted any matchup predictions. Go to the Home dashboard to make predictions!" 
+          />
         )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="pt-4 border-t border-slate-850">
+        <button
+          onClick={logout}
+          className="bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs font-bold px-4 py-3 rounded-xl border border-red-500/20 transition flex items-center justify-center gap-1.5 w-full sm:w-auto"
+        >
+          <LogOut className="w-4 h-4" /> Sign Out
+        </button>
       </div>
     </div>
   );

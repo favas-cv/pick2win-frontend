@@ -1,116 +1,153 @@
-import api, { isMockActive } from './api';
+import api from './api';
 
-let mockPredictions = [
-  {
-    id: 'p-1',
-    matchId: 'm-105',
-    tournamentName: 'UEFA Champions League',
-    matchInfo: {
-      teamA: { name: 'Manchester United', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=Manchester%20United' },
-      teamB: { name: 'Real Madrid', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=Real%20Madrid' },
-      kickoffTime: '2026-06-21T18:00:00Z',
-      status: 'Completed',
-      scoreA: 1,
-      scoreB: 3
-    },
-    predictedScoreA: 1,
-    predictedScoreB: 3,
-    submittedAt: '2026-06-21T17:40:00Z',
-    pointsEarned: 3,
-    status: 'Correct Score'
-  },
-  {
-    id: 'p-2',
-    matchId: 'm-104',
-    tournamentName: 'UEFA Champions League',
-    matchInfo: {
-      teamA: { name: 'Real Madrid', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=Real%20Madrid' },
-      teamB: { name: 'Manchester United', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=Manchester%20United' },
-      kickoffTime: '2026-06-23T11:00:00Z',
-      status: 'Live',
-      scoreA: 2,
-      scoreB: 1
-    },
-    predictedScoreA: 1,
-    predictedScoreB: 1,
-    submittedAt: '2026-06-23T10:30:00Z',
-    pointsEarned: 0,
-    status: 'Active'
+/**
+ * predictionService — all calls hit the real Django backend.
+ *
+ * Backend endpoints (from predictions/urls.py):
+ *   GET  /api/predictions/my-predictions/   — list user's predictions
+ *   POST /api/predictions/predict/           — submit a new prediction
+ *   PATCH /api/predictions/predict/<pk>/    — update an existing prediction
+ *
+ * Backend Prediction shape:
+ *   { id, match: { id, tournament, home_team, away_team, kickoff,
+ *                  home_score, away_score, is_finished, prediction_lock_time },
+ *     home_prediction, away_prediction, points, is_calculated, created_at }
+ *
+ * Frontend normalized shape:
+ *   { id, matchId, tournamentName, matchInfo: { teamA, teamB, kickoffTime,
+ *     status, scoreA, scoreB }, predictedScoreA, predictedScoreB,
+ *     submittedAt, pointsEarned, status }
+ */
+
+// ─── Normalizer ───────────────────────────────────────────────────────────────
+
+const normalizePrediction = (p) => {
+  const m = p.match || {};
+  const now = new Date();
+  const kickoff = m.kickoff ? new Date(m.kickoff) : null;
+
+  let matchStatus = 'Upcoming';
+  if (m.is_finished) matchStatus = 'Completed';
+  else if (kickoff && now > kickoff) matchStatus = 'Live';
+
+  let predStatus = 'Active';
+  if (p.is_calculated) {
+    if (p.points >= 3) predStatus = 'Correct Score';
+    else if (p.points >= 1) predStatus = 'Correct Winner';
+    else predStatus = 'Incorrect';
   }
-];
 
-let mockLeaderboards = {
-  'c-brazil': [
-    { rank: 1, name: 'Lucas Silva', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100', points: 195, accuracy: 78 },
-    { rank: 2, name: 'Beatriz Costa', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100', points: 182, accuracy: 72 },
-    { rank: 3, name: 'Thiago Santos', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100', points: 176, accuracy: 68 },
-    { rank: 4, name: 'John Doe', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100', points: 98, accuracy: 55 }
-  ],
-  'c-madrid': [
-    { rank: 1, name: 'Sergio Ramos Fan', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100', points: 310, accuracy: 82 },
-    { rank: 2, name: 'Raul Gonzalez', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100', points: 295, accuracy: 79 },
-    { rank: 3, name: 'Zidane Magic', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100', points: 288, accuracy: 74 }
-  ],
-  'c-united': [
-    { rank: 1, name: 'Bruno Magician', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100', points: 154, accuracy: 64 },
-    { rank: 2, name: 'Rooney Goal', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100', points: 148, accuracy: 62 }
-  ]
+  return {
+    id: p.id,
+    matchId: m.id,
+    tournamentName: m.tournament?.name || '',
+    matchInfo: {
+      teamA: m.home_team
+        ? {
+            name: m.home_team.name,
+            logo: m.home_team.logo ||
+              `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(m.home_team.name)}`,
+          }
+        : null,
+      teamB: m.away_team
+        ? {
+            name: m.away_team.name,
+            logo: m.away_team.logo ||
+              `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(m.away_team.name)}`,
+          }
+        : null,
+      kickoffTime: m.kickoff,
+      status: matchStatus,
+      scoreA: m.home_score ?? null,
+      scoreB: m.away_score ?? null,
+    },
+    predictedScoreA: p.home_prediction,
+    predictedScoreB: p.away_prediction,
+    submittedAt: p.created_at,
+    pointsEarned: p.points || 0,
+    status: predStatus,
+  };
 };
 
+const cache = {
+  myPredictions: { data: null, timestamp: 0 },
+};
+const CACHE_TTL = 30000; // 30 seconds
+
+// ─── Service ──────────────────────────────────────────────────────────────────
+
 export const predictionService = {
-  submitPrediction: async (matchId, predictedScoreA, predictedScoreB, clubId) => {
-    if (isMockActive) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const existingIdx = mockPredictions.findIndex(p => p.matchId === matchId);
-      const prediction = {
-        id: existingIdx !== -1 ? mockPredictions[existingIdx].id : `p-${Math.random().toString(36).substr(2, 9)}`,
-        matchId,
-        predictedScoreA: parseInt(predictedScoreA),
-        predictedScoreB: parseInt(predictedScoreB),
-        submittedAt: new Date().toISOString(),
-        pointsEarned: 0,
-        status: 'Active',
-        clubId
-      };
-      
-      if (existingIdx !== -1) {
-        mockPredictions[existingIdx] = { ...mockPredictions[existingIdx], ...prediction };
-      } else {
-        mockPredictions.push(prediction);
-      }
-      return prediction;
+
+  /**
+   * GET /api/predictions/my-predictions/
+   * Returns the authenticated user's prediction history.
+   */
+  getPredictions: async (force = false) => {
+    if (!force && cache.myPredictions.data && Date.now() - cache.myPredictions.timestamp < CACHE_TTL) {
+      return cache.myPredictions.data;
     }
-    const response = await api.post('/predictions/', { matchId, scoreA: predictedScoreA, scoreB: predictedScoreB, clubId });
-    return response.data;
+    const response = await api.get('/predictions/my-predictions/');
+    const list = response.data.results ?? response.data;
+    const mapped = list.map(normalizePrediction);
+    cache.myPredictions = { data: mapped, timestamp: Date.now() };
+    return mapped;
   },
 
-  getPredictions: async (clubId) => {
-    if (isMockActive) {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      return mockPredictions.filter(p => !clubId || p.clubId === clubId);
-    }
-    const response = await api.get('/predictions/', { params: { clubId } });
-    return response.data;
+  /**
+   * POST /api/predictions/predict/
+   * Submit a new prediction for a match.
+   * Payload: { match_id, home_prediction, away_prediction }
+   */
+  submitPrediction: async (matchId, predictedScoreA, predictedScoreB) => {
+    const response = await api.post('/predictions/predict/', {
+      match_id: matchId,
+      home_prediction: parseInt(predictedScoreA),
+      away_prediction: parseInt(predictedScoreB),
+    });
+    cache.myPredictions.timestamp = 0; // invalidate cache
+    return normalizePrediction(response.data);
   },
 
-  getLeaderboard: async (clubId) => {
-    if (isMockActive) {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      return mockLeaderboards[clubId] || [];
-    }
-    const response = await api.get(`/clubs/${clubId}/leaderboard/`);
-    return response.data;
+  /**
+   * PATCH /api/predictions/predict/<pk>/
+   * Update an existing prediction before the lock time.
+   */
+  updatePrediction: async (predictionId, predictedScoreA, predictedScoreB) => {
+    const response = await api.patch(`/predictions/predict/${predictionId}/`, {
+      home_prediction: parseInt(predictedScoreA),
+      away_prediction: parseInt(predictedScoreB),
+    });
+    cache.myPredictions.timestamp = 0; // invalidate cache
+    return normalizePrediction(response.data);
   },
 
-  getUserPredictionsHistory: async (userId, clubId) => {
-    if (isMockActive) {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      return mockPredictions;
+  /**
+   * GET /api/leaderboard/<club_id>/<tournament_id>/
+   * Fetches leaderboard stats for a club/tournament and maps user names.
+   */
+  getLeaderboard: async (clubId, tournamentId) => {
+    if (!clubId || !tournamentId) return [];
+    try {
+      const response = await api.get(`/leaderboard/${clubId}/${tournamentId}/`);
+      const board = response.data.results ?? response.data;
+
+      return board.map((item, index) => ({
+        rank: index + 1,
+        userId: item.user,
+        name: item.username || `Predictor ${item.user}`,
+        points: item.total_points,
+        accuracy: 100, // Default display value
+        logo: '👤',
+      }));
+    } catch (err) {
+      console.error('Leaderboard fetch failed:', err);
+      return [];
     }
-    const response = await api.get(`/users/${userId}/predictions/`, { params: { clubId } });
-    return response.data;
-  }
+  },
+
+  getUserPredictionsHistory: async () => {
+    return predictionService.getPredictions();
+  },
 };
 
 export default predictionService;

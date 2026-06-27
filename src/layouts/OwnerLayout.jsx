@@ -25,7 +25,7 @@ export const OwnerLayout = () => {
     return <Navigate to="/login/owner" replace />;
   }
 
-  if (user.role !== 'club_owner') {
+  if (user.role !== 'club_owner' && user.role !== 'club_admin') {
     if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
     return <Navigate to="/user/home" replace />;
   }

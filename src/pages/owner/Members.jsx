@@ -1,23 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useClub } from '../../context/ClubContext';
+import { clubService } from '../../services/clubService';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
 import { Users, Check, X, ShieldAlert, Ban, UserCheck, Trash2 } from 'lucide-react';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export const Members = () => {
-  const { activeClub, memberships, updateMembershipStatus } = useClub();
+  const { activeClub, updateMembershipStatus } = useClub();
   const [activeTab, setActiveTab] = useState('pending'); // 'pending' | 'approved' | 'suspended'
+  const [clubMembers, setClubMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedMember, setSelectedMember] = useState(null);
   const [actionType, setActionType] = useState(''); // 'approve' | 'reject' | 'suspend' | 'activate'
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Filter roster memberships for current active club
-  const clubMembers = memberships.filter(m => m.clubId === activeClub?.id);
-  const pendingRequests = clubMembers.filter(m => m.status === 'Pending');
-  const approvedMembers = clubMembers.filter(m => m.status === 'Approved');
-  const suspendedMembers = clubMembers.filter(m => m.status === 'Suspended' || m.status === 'Rejected');
+  useEffect(() => {
+    const fetchMembers = async () => {
+      if (!activeClub) return;
+      setLoading(true);
+      try {
+        const members = await clubService.getClubMembers(activeClub.id);
+        setClubMembers(members);
+      } catch (err) {
+        console.error('Failed to fetch members:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMembers();
+  }, [activeClub]);
+
+  // Map API members to their respective status (if the API doesn't provide status, we assume 'Approved' for now, or match on 'role')
+  // We'll map them all to 'Approved' since getClubMembers returns joined members
+  const pendingRequests = []; 
+  const approvedMembers = clubMembers; 
+  const suspendedMembers = [];
 
   const openActionModal = (member, type) => {
     setSelectedMember(member);
@@ -39,6 +58,7 @@ export const Members = () => {
   };
 
   const formatJoined = (dateStr) => {
+    if (!dateStr) return 'Unknown';
     return new Date(dateStr).toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',

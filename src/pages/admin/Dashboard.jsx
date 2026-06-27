@@ -1,21 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StatCard from '../../components/common/StatCard';
 import AnalyticsCard from '../../components/cards/AnalyticsCard';
-import { 
-  Users, Shield, Calendar, FileText, Trophy, 
-  Activity, ArrowUpRight, Plus, CheckCircle 
+import { adminService } from '../../services/adminService';
+import {
+  Users, Shield, Calendar, Trophy,
+  Activity, Plus, CheckCircle, Flag, AlertCircle
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Dashboard = () => {
-  // Mock activity logs
-  const activities = [
-    { id: 1, type: 'registration', desc: 'New club owner Carlos Silva registered Brazil Fans Club', time: '10 mins ago' },
-    { id: 2, type: 'prediction', desc: 'John Doe predicted score 2-1 for Brazil vs Argentina', time: '25 mins ago' },
-    { id: 3, type: 'tournament', desc: 'Admin created FIFA World Cup 2026 tournament', time: '2 hours ago' },
-    { id: 4, type: 'result', desc: 'Result verified: Old Trafford (Man Utd 1 - 3 Real Madrid)', time: '1 day ago' },
-    { id: 5, type: 'club', desc: 'Madridistas Hub approved by system governance', time: '2 days ago' }
-  ];
+  const [stats, setStats] = useState(null);
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const [dashStats, matches] = await Promise.all([
+          adminService.getDashboardStats(),
+          adminService.getMatches(),
+        ]);
+        setStats(dashStats);
+        // Show the 5 most recent matches
+        setRecentMatches(matches.slice(0, 5));
+      } catch (err) {
+        console.error(err);
+        setError('Could not load some dashboard data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const matchStatusStyle = (status) => {
+    switch (status) {
+      case 'Completed': return 'bg-slate-800 text-sports-gray';
+      case 'Live': return 'bg-red-500/10 text-red-400';
+      default: return 'bg-sports-green/10 text-sports-green';
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -43,60 +70,133 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* Admin stats */}
+      {/* Error banner */}
+      {error && (
+        <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-400 font-semibold">
+          <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+        </div>
+      )}
+
+      {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard title="Total Users" value="1,842" icon={Users} color="blue" />
-        <StatCard title="Total Clubs" value="38" icon={Shield} color="green" />
-        <StatCard title="Total Matches" value="156" icon={Calendar} color="yellow" />
-        <StatCard title="Predictions" value="14,802" icon={FileText} color="blue" />
-        <StatCard title="Tournaments" value="5" icon={Trophy} color="green" />
+        <StatCard
+          title="Total Users"
+          value={loading ? '…' : stats?.users ?? '—'}
+          icon={Users}
+          color="blue"
+        />
+        <StatCard
+          title="Total Clubs"
+          value={loading ? '…' : stats?.clubs ?? '—'}
+          icon={Shield}
+          color="green"
+        />
+        <StatCard
+          title="Total Matches"
+          value={loading ? '…' : stats?.matches ?? '—'}
+          icon={Calendar}
+          color="yellow"
+        />
+        <StatCard
+          title="Teams"
+          value={loading ? '…' : stats?.teams ?? '—'}
+          icon={Flag}
+          color="blue"
+        />
+        <StatCard
+          title="Tournaments"
+          value={loading ? '…' : stats?.tournaments ?? '—'}
+          icon={Trophy}
+          color="green"
+        />
       </div>
 
-      {/* SVG Analytics Grid */}
+      {/* Analytics charts */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <AnalyticsCard 
-          title="Prediction Growth" 
-          metric="14.8k" 
-          description="predictions made" 
-          type="line" 
+        <AnalyticsCard
+          title="Prediction Growth"
+          metric="—"
+          description="predictions made"
+          type="line"
         />
-        <AnalyticsCard 
-          title="User Growth" 
-          metric="+342" 
-          description="registrants this week" 
-          type="bar" 
+        <AnalyticsCard
+          title="User Growth"
+          metric={loading ? '…' : `${stats?.users ?? 0}`}
+          description="registered users"
+          type="bar"
           data={[30, 45, 60, 50, 75, 80, 95]}
         />
-        <AnalyticsCard 
-          title="Club Registrations" 
-          metric="38" 
-          description="approved networks" 
-          type="bar" 
+        <AnalyticsCard
+          title="Club Registrations"
+          metric={loading ? '…' : `${stats?.clubs ?? 0}`}
+          description="approved clubs"
+          type="bar"
           data={[40, 20, 50, 30, 80, 60, 70]}
         />
       </div>
 
-      {/* Recent Activity Log */}
+      {/* Recent Matches Feed */}
       <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center gap-2 mb-4 border-b border-slate-850 pb-3">
-          <Activity className="w-5 h-5 text-sports-green" />
-          <h2 className="text-sm font-black text-white uppercase tracking-wider">System Activity Feed</h2>
+        <div className="flex items-center justify-between mb-4 border-b border-slate-850 pb-3">
+          <div className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-sports-green" />
+            <h2 className="text-sm font-black text-white uppercase tracking-wider">Recent Matches</h2>
+          </div>
+          <Link
+            to="/admin/matches"
+            className="text-[10px] font-bold text-sports-green hover:text-sports-greenDark uppercase tracking-wider transition"
+          >
+            View All →
+          </Link>
         </div>
-        <div className="divide-y divide-slate-850">
-          {activities.map((act) => (
-            <div key={act.id} className="py-3.5 flex items-center justify-between text-xs font-semibold gap-4">
-              <div className="flex items-center gap-2 truncate">
-                <div className={`w-2 h-2 rounded-full shrink-0 ${
-                  act.type === 'registration' ? 'bg-sports-blue' :
-                  act.type === 'result' ? 'bg-sports-green' :
-                  act.type === 'tournament' ? 'bg-sports-yellow' : 'bg-sports-gray'
-                }`} />
-                <span className="text-slate-200 truncate">{act.desc}</span>
+
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-10 bg-slate-900 border border-slate-850 rounded-xl animate-pulse" />
+            ))}
+          </div>
+        ) : recentMatches.length > 0 ? (
+          <div className="divide-y divide-slate-850">
+            {recentMatches.map((match) => (
+              <div key={match.id} className="py-3.5 flex items-center justify-between gap-4 text-xs font-semibold">
+                <div className="flex items-center gap-3 min-w-0 truncate">
+                  {/* Tournament pill */}
+                  {match.tournament && (
+                    <span className="shrink-0 text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider hidden sm:inline">
+                      {match.tournament.name}
+                    </span>
+                  )}
+                  <span className="text-slate-200 truncate">
+                    <span className="font-extrabold text-white">{match.homeTeam?.name ?? '—'}</span>
+                    <span className="text-sports-gray font-normal mx-1.5">vs</span>
+                    <span className="font-extrabold text-white">{match.awayTeam?.name ?? '—'}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {match.isFinished && match.homeScore !== null && (
+                    <span className="font-black text-white text-sm">
+                      {match.homeScore}–{match.awayScore}
+                    </span>
+                  )}
+                  <span
+                    className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${matchStatusStyle(match.status)}`}
+                  >
+                    {match.status}
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] text-sports-gray shrink-0">{act.time}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-sports-gray text-center py-6">
+            No matches scheduled yet.{' '}
+            <Link to="/admin/matches" className="text-sports-green hover:underline">
+              Create one
+            </Link>
+            .
+          </p>
+        )}
       </div>
     </div>
   );

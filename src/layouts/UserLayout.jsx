@@ -19,7 +19,7 @@ export const UserLayout = () => {
     return <Navigate to="/login/user" replace />;
   }
 
-  if (user.role !== 'user') {
+  if (user.role !== 'user' && user.role !== 'club_admin') {
     if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
     if (user.role === 'club_owner') return <Navigate to="/owner/dashboard" replace />;
   }

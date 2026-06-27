@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
+import { User, Phone, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
 
 export const Register = () => {
   const { register: registerUser } = useAuth();
@@ -14,9 +14,9 @@ export const Register = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
   useEffect(() => {
-    const inviteParam = searchParams.get('invite');
+    const inviteParam = searchParams.get('invite') || searchParams.get('token');
     if (inviteParam) {
-      setValue('inviteCode', inviteParam);
+      setValue('token', inviteParam);
     }
   }, [searchParams, setValue]);
 
@@ -24,10 +24,16 @@ export const Register = () => {
     setError('');
     setLoading(true);
     try {
-      await registerUser(data.name, data.email, data.password, 'user', data.inviteCode);
-      navigate('/user/home');
+      await registerUser({
+        name: data.name,
+        phone: data.phone,
+        password1: data.password1,
+        password2: data.password2,
+        token: data.token
+      });
+      navigate('/login/user');
     } catch (err) {
-      setError('Registration failed. Please check inputs and try again.');
+      setError(err.response?.data?.token || err.response?.data?.non_field_errors || 'Registration failed. Please check inputs and try again.');
     } finally {
       setLoading(false);
     }
@@ -37,13 +43,13 @@ export const Register = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">User Registration</h2>
-        <p className="text-xs text-sports-gray mt-1">Join PRED-iT and start predicting match scores.</p>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Join PRED-iT and start predicting match scores.</p>
       </div>
 
       {error && (
         <div className="bg-red-50/80 border border-red-200 text-red-650 text-xs p-3 rounded-xl flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
+          <span>{typeof error === 'object' ? JSON.stringify(error) : error}</span>
         </div>
       )}
 
@@ -65,21 +71,21 @@ export const Register = () => {
           {errors.name && <span className="text-[10px] text-red-500 block mt-1">{errors.name.message}</span>}
         </div>
 
-        {/* Email */}
+        {/* Phone */}
         <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Email Address</label>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
-              <Mail className="w-4 h-4" />
+              <Phone className="w-4 h-4" />
             </span>
             <input
-              type="email"
-              placeholder="example@mail.com"
-              {...register('email', { required: 'Email is required' })}
+              type="text"
+              placeholder="+1234567890"
+              {...register('phone', { required: 'Phone number is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
             />
           </div>
-          {errors.email && <span className="text-[10px] text-red-500 block mt-1">{errors.email.message}</span>}
+          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
         </div>
 
         {/* Password */}
@@ -92,20 +98,39 @@ export const Register = () => {
             <input
               type="password"
               placeholder="••••••••"
-              {...register('password', { 
+              {...register('password1', { 
                 required: 'Password is required', 
                 minLength: { value: 6, message: 'Password must be at least 6 characters' }
               })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
             />
           </div>
-          {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
+          {errors.password1 && <span className="text-[10px] text-red-500 block mt-1">{errors.password1.message}</span>}
         </div>
 
-        {/* Invite Code */}
+        {/* Password 2 */}
+        <div>
+          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Confirm Password</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
+              <Lock className="w-4 h-4" />
+            </span>
+            <input
+              type="password"
+              placeholder="••••••••"
+              {...register('password2', { 
+                required: 'Please confirm password'
+              })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+            />
+          </div>
+          {errors.password2 && <span className="text-[10px] text-red-500 block mt-1">{errors.password2.message}</span>}
+        </div>
+
+        {/* Invite Token */}
         <div>
           <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">
-            Club Invite Code / Registration Token (Optional)
+            Club Invite Code / Registration Token
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
@@ -114,10 +139,11 @@ export const Register = () => {
             <input
               type="text"
               placeholder="e.g. BRAZIL10"
-              {...register('inviteCode')}
+              {...register('token', { required: 'Invite Token is required to register' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
             />
           </div>
+          {errors.token && <span className="text-[10px] text-red-500 block mt-1">{errors.token.message}</span>}
         </div>
 
         <button
