@@ -14,14 +14,11 @@ export const InviteLink = () => {
     setLoading(true);
     try {
       const response = await clubService.generateInviteLink(activeClub.id);
-      const inviteLink = response.invite_link || response.token;
-      let token = response.token;
-      if (inviteLink && inviteLink.includes('token=')) {
-        token = inviteLink.split('token=')[1];
-      }
+      // ✅ Backend now returns { invite_link: "...", token: "UUID" }
+      const token = response.token;
       setData({
-        inviteCode: token || inviteLink, // Map backend token to inviteCode/regToken for UI
-        registrationToken: token || inviteLink,
+        inviteCode: token,
+        registrationToken: token,
       });
     } catch (err) {
       console.error('Failed to generate invite link:', err);
@@ -32,7 +29,6 @@ export const InviteLink = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="border-b border-slate-850 pb-4">
         <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
           <Link2 className="w-6 h-6 text-sports-green" /> Invite Settings

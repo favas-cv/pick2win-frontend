@@ -37,7 +37,7 @@ export const Dashboard = () => {
   };
 
   // ── Generate invite link ────────────────────────────────────────────
-  const handleGenerateLink = () => {
+ const handleGenerateLink = () => {
     if (!activeClub?.id) {
       alert('No active club found. Please refresh.');
       return;
@@ -46,17 +46,15 @@ export const Dashboard = () => {
     setLinkError(null);
     clubService.generateInviteLink(activeClub.id)
       .then(response => {
-        console.log('Generate link response:', response);
-        // Backend returns: { "invite_link": "https/token=XXXX" }
-        const raw = response.invite_link || response.token || '';
+        const token = response.token;
         setInviteData({
-          inviteCode: raw,
-          registrationToken: raw,
+          inviteCode: token,
+          registrationToken: token,
         });
       })
       .catch(err => {
         console.error('Generate link error:', err?.response?.data || err.message);
-        setLinkError('Failed to generate link. Check console.');
+        setLinkError('Failed to generate link.');
       })
       .finally(() => setGeneratingLink(false));
   };

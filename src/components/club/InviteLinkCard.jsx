@@ -5,7 +5,8 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
 
-  const inviteLink = `${window.location.origin}/register?invite=${inviteCode}`;
+  // ✅ Fixed: use token as query param
+  const inviteLink = `https://pick2win-f.vercel.app/register?token=${inviteCode}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(inviteLink);
@@ -21,7 +22,6 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-      {/* Invite Link Card */}
       <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-sports-green/10 text-sports-green border border-sports-green/20 rounded-xl flex items-center justify-center shrink-0">
@@ -34,7 +34,6 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
             </p>
           </div>
         </div>
-
         <div className="flex gap-2 pt-2">
           <input
             type="text"
@@ -52,7 +51,6 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
         </div>
       </div>
 
-      {/* Registration Token Card */}
       <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-sports-yellow/10 text-sports-yellow border border-sports-yellow/20 rounded-xl flex items-center justify-center shrink-0">
@@ -65,7 +63,6 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
             </p>
           </div>
         </div>
-
         <div className="flex gap-2 pt-2">
           <input
             type="text"
@@ -75,7 +72,7 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
           />
           <button
             onClick={handleCopyToken}
-            className="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-xl transition border border-slate-705 flex items-center gap-1 shrink-0"
+            className="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-xl transition border border-slate-700 flex items-center gap-1 shrink-0"
           >
             {copiedToken ? <Check className="w-4 h-4 text-sports-green" /> : <Copy className="w-4 h-4" />}
             <span>{copiedToken ? 'Copied' : 'Copy'}</span>
