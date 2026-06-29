@@ -17,7 +17,7 @@ export const TournamentSelection = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse"></div>
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse"></div>
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -26,8 +26,8 @@ export const TournamentSelection = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
           <Trophy className="w-6 h-6 text-sports-green" /> Tournaments
         </h1>
         <p className="text-xs text-sports-gray mt-1">
@@ -43,15 +43,15 @@ export const TournamentSelection = () => {
         {allTournaments.map((tournament) => (
           <div
             key={tournament.id}
-            className="glass-card border-slate-800 rounded-2xl p-5 flex items-center gap-4"
+            className="glass-card border-slate-200 rounded-2xl p-5 flex items-center gap-4"
           >
-            <div className="w-12 h-12 bg-slate-900 border border-slate-850 rounded-xl flex items-center justify-center text-2xl shrink-0">
+            <div className="w-12 h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl shrink-0">
               {tournament.logo || '🏆'}
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-white leading-snug">{tournament.name}</h3>
+              <h3 className="text-sm font-extrabold text-slate-900 leading-snug">{tournament.name}</h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold tracking-wider uppercase">
+                <span className="text-[9px] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded text-sports-gray font-bold tracking-wider uppercase">
                   {tournament.sportType || 'Football'}
                 </span>
                 <span className="text-[9px] text-sports-gray font-bold">

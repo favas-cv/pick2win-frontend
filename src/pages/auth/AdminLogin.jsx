@@ -38,7 +38,7 @@ export const AdminLogin = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50/80 border border-red-200 text-red-650 text-xs p-3 rounded-xl flex items-center gap-2">
+        <div className="bg-red-50/80 border border-red-200 text-red-600 text-xs p-3 rounded-xl flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -56,7 +56,7 @@ export const AdminLogin = () => {
               type="text"
               placeholder="7306656998"
               {...register('phone', { required: 'Phone is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
@@ -73,7 +73,7 @@ export const AdminLogin = () => {
               type="password"
               placeholder="••••••••"
               {...register('password', { required: 'Password is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
@@ -82,7 +82,7 @@ export const AdminLogin = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-755 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-blue-600/10 flex items-center justify-center gap-1.5 active:scale-98"
+          className="w-full bg-black hover:bg-zinc-800 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-black/10 flex items-center justify-center gap-1.5 active:scale-98"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -104,7 +104,7 @@ export const AdminLogin = () => {
       </div>
 
       <div className="text-center text-xs">
-        <Link to="/" className="text-blue-600 hover:underline font-bold">Back to Landing Page</Link>
+        <Link to="/" className="text-black hover:underline font-bold">Back to Landing Page</Link>
       </div>
     </div>
   );

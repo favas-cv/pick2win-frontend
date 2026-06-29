@@ -50,7 +50,7 @@ export const AdminLayout = () => {
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between h-16 px-4 bg-white border-b border-slate-200 z-30 sticky top-0">
         <div className="flex items-center gap-2">
-          <ShieldAlert className="w-5 h-5 text-blue-600" />
+          <ShieldAlert className="w-5 h-5 text-black" />
           <span className="font-extrabold text-sm tracking-wide text-slate-900">
             PRED-iT Admin
           </span>
@@ -75,7 +75,7 @@ export const AdminLayout = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition ${
                     isActive
-                      ? 'bg-blue-50 text-blue-600 border border-blue-105'
+                      ? 'bg-[#fffdf2] text-black border border-black/10'
                       : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
                   }`
                 }
@@ -103,13 +103,13 @@ export const AdminLayout = () => {
       >
         <button
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute -right-3 top-20 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-850 border border-slate-200 rounded-full p-1 shadow-sm"
+          className="absolute -right-3 top-20 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-700 border border-slate-200 rounded-full p-1 shadow-sm"
         >
           {sidebarCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
         </button>
 
         <div className={`p-6 border-b border-slate-200 flex items-center gap-2 ${sidebarCollapsed ? 'justify-center' : ''}`}>
-          <ShieldAlert className="w-6 h-6 text-blue-600 shrink-0" />
+          <ShieldAlert className="w-6 h-6 text-black shrink-0" />
           {!sidebarCollapsed && (
             <div className="truncate">
               <h2 className="font-extrabold text-sm text-slate-900 tracking-wide">PRED-iT Admin</h2>
@@ -126,7 +126,7 @@ export const AdminLayout = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-sm transition-all ${
                   isActive
-                    ? 'bg-blue-50 text-blue-600 border border-blue-100'
+                    ? 'bg-[#fffdf2] text-black border border-black/10'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 border border-transparent'
                 } ${sidebarCollapsed ? 'justify-center' : ''}`
               }

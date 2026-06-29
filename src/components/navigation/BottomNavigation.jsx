@@ -20,7 +20,7 @@ export const BottomNavigation = () => {
             className={({ isActive }) =>
               `flex flex-col items-center justify-center w-full h-full gap-1 transition-all ${
                 isActive
-                  ? 'text-blue-600'
+                  ? 'text-black'
                   : 'text-slate-400 hover:text-slate-700'
               }`
             }

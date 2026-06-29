@@ -71,7 +71,7 @@ export const Members = () => {
       {/* Header */}
       <div className="border-b border-slate-200 pb-4">
         <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
-          <Users className="w-6 h-6 text-blue-600" /> Club Member Directories
+          <Users className="w-6 h-6 text-black" /> Club Member Directories
         </h1>
         <p className="text-xs text-sports-gray mt-1">
           Approve pending requests, review active members, or manage suspensions.
@@ -83,29 +83,29 @@ export const Members = () => {
         <button
           onClick={() => setActiveTab('pending')}
           className={`pb-3 transition relative flex items-center gap-1.5 ${
-            activeTab === 'pending' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-800'
+            activeTab === 'pending' ? 'text-black' : 'text-slate-400 hover:text-slate-800'
           }`}
         >
           Pending Requests ({pendingRequests.length})
-          {activeTab === 'pending' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600"></span>}
+          {activeTab === 'pending' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
         </button>
         <button
           onClick={() => setActiveTab('approved')}
           className={`pb-3 transition relative flex items-center gap-1.5 ${
-            activeTab === 'approved' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-800'
+            activeTab === 'approved' ? 'text-black' : 'text-slate-400 hover:text-slate-800'
           }`}
         >
           Approved Members ({approvedMembers.length})
-          {activeTab === 'approved' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600"></span>}
+          {activeTab === 'approved' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
         </button>
         <button
           onClick={() => setActiveTab('suspended')}
           className={`pb-3 transition relative flex items-center gap-1.5 ${
-            activeTab === 'suspended' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-800'
+            activeTab === 'suspended' ? 'text-black' : 'text-slate-400 hover:text-slate-800'
           }`}
         >
           Rejected & Suspended ({suspendedMembers.length})
-          {activeTab === 'suspended' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600"></span>}
+          {activeTab === 'suspended' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
         </button>
       </div>
 
@@ -134,7 +134,7 @@ export const Members = () => {
                     </button>
                     <button
                       onClick={() => openActionModal(member, 'reject')}
-                      className="bg-red-50 hover:bg-red-650 text-red-650 hover:text-white p-2 rounded-xl border border-red-200 transition"
+                      className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-2 rounded-xl border border-red-200 transition"
                       title="Reject Request"
                     >
                       <X className="w-4 h-4" />
@@ -162,7 +162,7 @@ export const Members = () => {
                         <span className="text-[9px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded font-bold text-slate-600">
                           {member.predictions} Preds
                         </span>
-                        <span className="text-[9px] bg-blue-50 border border-blue-100 px-2 py-0.5 rounded font-bold text-blue-600">
+                        <span className="text-[9px] bg-[#fffdf2] border border-black/10 px-2 py-0.5 rounded font-bold text-black">
                           {member.points} Points
                         </span>
                       </div>
@@ -171,7 +171,7 @@ export const Members = () => {
                   {member.id !== 'm-john' && ( // Prevent self-suspension of main demo account
                     <button
                       onClick={() => openActionModal(member, 'suspend')}
-                      className="bg-red-50 hover:bg-red-650 text-red-600 hover:text-white px-3 py-2 border border-red-200 rounded-xl text-[10px] font-extrabold uppercase tracking-wide transition shrink-0"
+                      className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-3 py-2 border border-red-200 rounded-xl text-[10px] font-extrabold uppercase tracking-wide transition shrink-0"
                     >
                       Suspend
                     </button>

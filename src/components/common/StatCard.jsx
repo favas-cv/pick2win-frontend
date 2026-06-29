@@ -16,10 +16,10 @@ export const StatCard = ({ title, value, icon: Icon, trend, color = 'green' }) =
   };
 
   return (
-    <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden flex justify-between items-center group hover:border-slate-700 transition duration-300">
+    <div className="glass-card border-slate-200 rounded-2xl p-6 relative overflow-hidden flex justify-between items-center group hover:border-slate-300 transition duration-300">
       <div className="space-y-1">
         <span className="text-xs font-bold text-sports-gray tracking-wider uppercase">{title}</span>
-        <h3 className="text-3xl font-extrabold text-white leading-none tracking-tight">{value}</h3>
+        <h3 className="text-3xl font-extrabold text-slate-900 leading-none tracking-tight">{value}</h3>
         {trend && (
           <div className="text-[10px] text-sports-green font-bold pt-1">
             {trend}

@@ -38,7 +38,7 @@ export const Dashboard = () => {
 
   const matchStatusStyle = (status) => {
     switch (status) {
-      case 'Completed': return 'bg-slate-800 text-sports-gray';
+      case 'Completed': return 'bg-slate-100 text-sports-gray';
       case 'Live': return 'bg-red-500/10 text-red-400';
       default: return 'bg-sports-green/10 text-sports-green';
     }
@@ -49,7 +49,7 @@ export const Dashboard = () => {
       {/* Welcome & Quick actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-white">System Governance</h1>
+          <h1 className="text-xl md:text-2xl font-black text-slate-900">System Governance</h1>
           <p className="text-xs text-sports-gray mt-1">
             Global administrative panel for multi-club prediction software.
           </p>
@@ -57,13 +57,13 @@ export const Dashboard = () => {
         <div className="flex gap-2.5">
           <Link
             to="/admin/matches"
-            className="bg-sports-green hover:bg-sports-greenDark text-black text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95"
+            className="bg-sports-green hover:bg-sports-greenDark text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95"
           >
             <Plus className="w-4 h-4" /> Create Match
           </Link>
           <Link
             to="/admin/results"
-            className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-black px-4 py-2.5 border border-slate-700 rounded-xl transition flex items-center gap-1"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-black px-4 py-2.5 border border-slate-300 rounded-xl transition flex items-center gap-1"
           >
             <CheckCircle className="w-4 h-4" /> Enter Scores
           </Link>
@@ -136,11 +136,11 @@ export const Dashboard = () => {
       </div>
 
       {/* Recent Matches Feed */}
-      <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-4 border-b border-slate-850 pb-3">
+      <div className="glass-card border-slate-200 rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-sports-green" />
-            <h2 className="text-sm font-black text-white uppercase tracking-wider">Recent Matches</h2>
+            <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider">Recent Matches</h2>
           </div>
           <Link
             to="/admin/matches"
@@ -153,29 +153,29 @@ export const Dashboard = () => {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-10 bg-slate-900 border border-slate-850 rounded-xl animate-pulse" />
+              <div key={i} className="h-10 bg-slate-50 border border-slate-200 rounded-xl animate-pulse" />
             ))}
           </div>
         ) : recentMatches.length > 0 ? (
-          <div className="divide-y divide-slate-850">
+          <div className="divide-y divide-slate-200">
             {recentMatches.map((match) => (
               <div key={match.id} className="py-3.5 flex items-center justify-between gap-4 text-xs font-semibold">
                 <div className="flex items-center gap-3 min-w-0 truncate">
                   {/* Tournament pill */}
                   {match.tournament && (
-                    <span className="shrink-0 text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider hidden sm:inline">
+                    <span className="shrink-0 text-[9px] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider hidden sm:inline">
                       {match.tournament.name}
                     </span>
                   )}
-                  <span className="text-slate-200 truncate">
-                    <span className="font-extrabold text-white">{match.homeTeam?.name ?? '—'}</span>
+                  <span className="text-slate-900 truncate">
+                    <span className="font-extrabold text-slate-900">{match.homeTeam?.name ?? '—'}</span>
                     <span className="text-sports-gray font-normal mx-1.5">vs</span>
-                    <span className="font-extrabold text-white">{match.awayTeam?.name ?? '—'}</span>
+                    <span className="font-extrabold text-slate-900">{match.awayTeam?.name ?? '—'}</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {match.isFinished && match.homeScore !== null && (
-                    <span className="font-black text-white text-sm">
+                    <span className="font-black text-slate-900 text-sm">
                       {match.homeScore}–{match.awayScore}
                     </span>
                   )}

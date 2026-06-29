@@ -93,7 +93,7 @@ export const TournamentDetails = () => {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-bold text-slate-900">Tournament not found</h3>
-        <Link to="/user/tournaments" className="text-blue-600 mt-2 inline-block font-semibold">Back to list</Link>
+        <Link to="/user/tournaments" className="text-black mt-2 inline-block font-semibold">Back to list</Link>
       </div>
     );
   }
@@ -118,14 +118,14 @@ export const TournamentDetails = () => {
         <div className="space-y-2 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl md:text-2xl font-black text-slate-900">{tournament.name}</h1>
-            <span className="text-[9px] bg-blue-50 border border-blue-100 text-blue-600 px-2.5 py-0.5 rounded-lg font-bold uppercase tracking-wider">
+            <span className="text-[9px] bg-[#fffdf2] border border-black/10 text-black px-2.5 py-0.5 rounded-lg font-bold uppercase tracking-wider">
               {tournament.status}
             </span>
           </div>
           <p className="text-xs text-sports-gray leading-relaxed max-w-2xl font-semibold">{tournament.description}</p>
           <div className="flex items-center gap-4 text-[10px] text-sports-gray font-bold uppercase tracking-wider">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-blue-600" /> 
+              <Calendar className="w-3.5 h-3.5 text-black" /> 
               {new Date(tournament.startDate).toLocaleDateString()} - {new Date(tournament.endDate).toLocaleDateString()}
             </span>
           </div>
@@ -136,20 +136,20 @@ export const TournamentDetails = () => {
         <button
           onClick={() => setActiveTab('matches')}
           className={`pb-3 transition relative ${
-            activeTab === 'matches' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-900'
+            activeTab === 'matches' ? 'text-black' : 'text-slate-400 hover:text-slate-900'
           }`}
         >
           Matches
-          {activeTab === 'matches' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600"></span>}
+          {activeTab === 'matches' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
         </button>
         <button
           onClick={() => setActiveTab('predictions')}
           className={`pb-3 transition relative ${
-            activeTab === 'predictions' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-900'
+            activeTab === 'predictions' ? 'text-black' : 'text-slate-400 hover:text-slate-900'
           }`}
         >
           My Predictions ({predictions.length})
-          {activeTab === 'predictions' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600"></span>}
+          {activeTab === 'predictions' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
         </button>
 
       </div>

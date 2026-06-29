@@ -22,9 +22,9 @@ export const AuthLayout = () => {
       <div className="w-full max-w-md z-10">
         <div className="text-center mb-8 flex flex-col items-center">
           <Link to="/" className="flex items-center gap-1.5 font-bold text-2xl text-slate-900 mb-2">
-            <Trophy className="w-6 h-6 text-blue-600 fill-blue-600/10 shadow-sm" />
+            <Trophy className="w-6 h-6 text-black fill-black/10 shadow-sm" />
             <span className="font-black tracking-tight">
-              PRED<span className="text-blue-600">-iT</span>
+              PRED<span className="text-black">-iT</span>
             </span>
           </Link>
           <p className="text-sports-gray text-xs font-semibold">

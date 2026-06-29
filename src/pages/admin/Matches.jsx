@@ -8,7 +8,7 @@ import { Calendar, Plus, Save, Lock, CheckCircle, Clock, AlertCircle } from 'luc
 const statusStyle = (status) => {
   switch (status) {
     case 'Completed':
-      return 'text-sports-gray bg-slate-900 border-slate-800';
+      return 'text-sports-gray bg-slate-50 border-slate-200';
     case 'Live':
       return 'text-red-400 bg-red-500/10 border-red-500/20';
     default:
@@ -77,7 +77,7 @@ export const Matches = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse" />
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse" />
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -86,9 +86,9 @@ export const Matches = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
             <Calendar className="w-6 h-6 text-sports-green" /> Match Governance
           </h1>
           <p className="text-xs text-sports-gray mt-1">
@@ -97,7 +97,7 @@ export const Matches = () => {
         </div>
         <button
           onClick={() => { setShowForm(!showForm); setError(''); }}
-          className="bg-sports-green hover:bg-sports-greenDark text-black text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95 shrink-0"
+          className="bg-sports-green hover:bg-sports-greenDark text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95 shrink-0"
         >
           <Plus className="w-4 h-4" /> {showForm ? 'Cancel' : 'Schedule Match'}
         </button>
@@ -112,8 +112,8 @@ export const Matches = () => {
 
       {/* Creation Form */}
       {showForm && (
-        <div className="glass-card border-slate-800 rounded-2xl p-6 animate-fadeIn">
-          <h3 className="text-sm font-black text-white uppercase tracking-wider mb-4 border-b border-slate-850 pb-2">
+        <div className="glass-card border-slate-200 rounded-2xl p-6 animate-fadeIn">
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
             Schedule New Matchup
           </h3>
           <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -124,11 +124,11 @@ export const Matches = () => {
               </label>
               <select
                 {...register('tournamentId', { required: 'Tournament is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:border-sports-green focus:outline-none transition"
               >
-                <option value="" className="bg-slate-900">— Select Tournament —</option>
+                <option value="" className="bg-slate-50">— Select Tournament —</option>
                 {tournaments.map((t) => (
-                  <option key={t.id} value={t.id} className="bg-slate-900">
+                  <option key={t.id} value={t.id} className="bg-slate-50">
                     {t.name}
                   </option>
                 ))}
@@ -146,7 +146,7 @@ export const Matches = () => {
               <input
                 type="datetime-local"
                 {...register('kickoff', { required: 'Kickoff time is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 focus:border-sports-green focus:outline-none transition"
               />
               {errors.kickoff && (
                 <span className="text-[9px] text-red-400 block mt-1">{errors.kickoff.message}</span>
@@ -160,11 +160,11 @@ export const Matches = () => {
               </label>
               <select
                 {...register('homeTeamId', { required: 'Home team is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:border-sports-green focus:outline-none transition"
               >
-                <option value="" className="bg-slate-900">— Select Home Team —</option>
+                <option value="" className="bg-slate-50">— Select Home Team —</option>
                 {teams.map((t) => (
-                  <option key={t.id} value={t.id} className="bg-slate-900">
+                  <option key={t.id} value={t.id} className="bg-slate-50">
                     {t.name} {t.countryCode ? `(${t.countryCode})` : ''}
                   </option>
                 ))}
@@ -181,11 +181,11 @@ export const Matches = () => {
               </label>
               <select
                 {...register('awayTeamId', { required: 'Away team is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-3 text-xs text-white focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:border-sports-green focus:outline-none transition"
               >
-                <option value="" className="bg-slate-900">— Select Away Team —</option>
+                <option value="" className="bg-slate-50">— Select Away Team —</option>
                 {teams.map((t) => (
-                  <option key={t.id} value={t.id} className="bg-slate-900">
+                  <option key={t.id} value={t.id} className="bg-slate-50">
                     {t.name} {t.countryCode ? `(${t.countryCode})` : ''}
                   </option>
                 ))}
@@ -204,22 +204,22 @@ export const Matches = () => {
               <input
                 type="datetime-local"
                 {...register('predictionLockTime')}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 focus:border-sports-green focus:outline-none transition"
               />
             </div>
 
-            <div className="md:col-span-2 pt-2 border-t border-slate-850 flex justify-end gap-3">
+            <div className="md:col-span-2 pt-2 border-t border-slate-200 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-black text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
+                className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
               >
                 <Save className="w-4 h-4" />
                 {submitting ? 'Saving…' : 'Save Match'}
@@ -235,16 +235,16 @@ export const Matches = () => {
           {matches.map((match) => (
             <div
               key={match.id}
-              className="glass-card border-slate-800 rounded-2xl p-5 hover:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition duration-200"
+              className="glass-card border-slate-200 rounded-2xl p-5 hover:border-slate-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition duration-200"
             >
               {/* Left: tournament + teams */}
               <div className="flex-1 min-w-0">
                 {match.tournament && (
-                  <span className="text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider">
+                  <span className="text-[9px] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider">
                     {match.tournament.name}
                   </span>
                 )}
-                <div className="flex items-center gap-2 mt-2 font-extrabold text-sm text-white">
+                <div className="flex items-center gap-2 mt-2 font-extrabold text-sm text-slate-900">
                   <span>{match.homeTeam?.name ?? '—'}</span>
                   <span className="text-sports-gray font-normal text-xs">vs</span>
                   <span>{match.awayTeam?.name ?? '—'}</span>
@@ -280,8 +280,8 @@ export const Matches = () => {
               {/* Right: score + status */}
               <div className="flex items-center gap-3 shrink-0">
                 {match.isFinished && match.homeScore !== null && (
-                  <div className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-center">
-                    <span className="text-base font-black text-white">
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center">
+                    <span className="text-base font-black text-slate-900">
                       {match.homeScore} – {match.awayScore}
                     </span>
                     <span className="text-[9px] text-sports-gray block mt-0.5 font-bold uppercase">Final</span>

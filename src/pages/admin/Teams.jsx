@@ -70,7 +70,7 @@ export const Teams = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse" />
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse" />
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -79,9 +79,9 @@ export const Teams = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
             <Flag className="w-6 h-6 text-sports-green" /> Team Governance
           </h1>
           <p className="text-xs text-sports-gray mt-1">
@@ -90,7 +90,7 @@ export const Teams = () => {
         </div>
         <button
           onClick={() => { setShowForm(!showForm); setError(''); }}
-          className="bg-sports-green hover:bg-sports-greenDark text-black text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95 shrink-0"
+          className="bg-sports-green hover:bg-sports-greenDark text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95 shrink-0"
         >
           <Plus className="w-4 h-4" /> {showForm ? 'Cancel' : 'Add Team'}
         </button>
@@ -105,8 +105,8 @@ export const Teams = () => {
 
       {/* Creation Form */}
       {showForm && (
-        <div className="glass-card border-slate-800 rounded-2xl p-6 animate-fadeIn">
-          <h3 className="text-sm font-black text-white uppercase tracking-wider mb-4 border-b border-slate-850 pb-2">
+        <div className="glass-card border-slate-200 rounded-2xl p-6 animate-fadeIn">
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
             Register New Team
           </h3>
           <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,7 +119,7 @@ export const Teams = () => {
                 type="text"
                 placeholder="e.g. Brazil"
                 {...register('name', { required: 'Name is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-600 focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
               />
               {errors.name && (
                 <span className="text-[9px] text-red-400 block mt-1">{errors.name.message}</span>
@@ -135,7 +135,7 @@ export const Teams = () => {
                 type="text"
                 placeholder="e.g. BR, ES, EN"
                 {...register('countryCode')}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-600 focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
               />
             </div>
 
@@ -148,22 +148,22 @@ export const Teams = () => {
                 type="text"
                 placeholder="https://example.com/logo.png (leave blank for auto-generated)"
                 {...register('logo')}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-600 focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
               />
             </div>
 
-            <div className="md:col-span-2 pt-2 border-t border-slate-850 flex justify-end gap-3">
+            <div className="md:col-span-2 pt-2 border-t border-slate-200 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-black text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
+                className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
               >
                 <Save className="w-4 h-4" />
                 {submitting ? 'Saving…' : 'Save Team'}
@@ -181,7 +181,7 @@ export const Teams = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by team name or country code…"
-            className="w-full sm:w-80 bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-600 focus:border-sports-green focus:outline-none transition"
+            className="w-full sm:w-80 bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
           />
         </div>
       )}
@@ -192,7 +192,7 @@ export const Teams = () => {
           {filteredTeams.map((team) => (
             <div
               key={team.id}
-              className="glass-card border-slate-800 rounded-2xl p-4 hover:border-slate-700 transition duration-300 flex flex-col items-center text-center group relative"
+              className="glass-card border-slate-200 rounded-2xl p-4 hover:border-slate-300 transition duration-300 flex flex-col items-center text-center group relative"
             >
               {/* Delete button */}
               <button
@@ -209,11 +209,11 @@ export const Teams = () => {
                 onError={(e) => {
                   e.target.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(team.name)}`;
                 }}
-                className="w-14 h-14 object-contain bg-slate-900/60 p-2 rounded-2xl border border-slate-850 shadow-inner"
+                className="w-14 h-14 object-contain bg-white p-2 rounded-2xl border border-slate-200 shadow-inner"
               />
 
               <div className="mt-3">
-                <span className="text-xs font-extrabold text-white block">{team.name}</span>
+                <span className="text-xs font-extrabold text-slate-900 block">{team.name}</span>
                 {team.countryCode && (
                   <span className="text-[9px] text-sports-gray font-bold tracking-widest uppercase block mt-0.5">
                     {team.countryCode}

@@ -46,7 +46,7 @@ export const OwnerRegister = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50/80 border border-red-200 text-red-650 text-xs p-3 rounded-xl flex items-center gap-2">
+        <div className="bg-red-50/80 border border-red-200 text-red-600 text-xs p-3 rounded-xl flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -64,7 +64,7 @@ export const OwnerRegister = () => {
               type="text"
               placeholder="Carlos Silva"
               {...register('name', { required: 'Name is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.name && <span className="text-[10px] text-red-500 block mt-1">{errors.name.message}</span>}
@@ -81,7 +81,7 @@ export const OwnerRegister = () => {
               type="text"
               placeholder="+1234567890"
               {...register('phone', { required: 'Phone is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
@@ -101,7 +101,7 @@ export const OwnerRegister = () => {
                 required: 'Password is required', 
                 minLength: { value: 6, message: 'Password must be at least 6 characters' }
               })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
@@ -118,7 +118,7 @@ export const OwnerRegister = () => {
               type="password"
               placeholder="••••••••"
               {...register('password2', { required: 'Please confirm password' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.password2 && <span className="text-[10px] text-red-500 block mt-1">{errors.password2.message}</span>}
@@ -135,7 +135,7 @@ export const OwnerRegister = () => {
               type="text"
               placeholder="Brazil Fans Club"
               {...register('club_name', { required: 'Club name is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.club_name && <span className="text-[10px] text-red-500 block mt-1">{errors.club_name.message}</span>}
@@ -152,7 +152,7 @@ export const OwnerRegister = () => {
               type="text"
               placeholder="brazil-fans"
               {...register('slug', { required: 'Slug is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.slug && <span className="text-[10px] text-red-500 block mt-1">{errors.slug.message}</span>}
@@ -169,7 +169,7 @@ export const OwnerRegister = () => {
               type="text"
               placeholder="Rio de Janeiro"
               {...register('place', { required: 'Place/Location is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.place && <span className="text-[10px] text-red-500 block mt-1">{errors.place.message}</span>}
@@ -186,13 +186,13 @@ export const OwnerRegister = () => {
               placeholder="Tell us about the club..."
               rows={3}
               {...register('description', { required: 'Description is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.description && <span className="text-[10px] text-red-500 block mt-1">{errors.description.message}</span>}
         </div>
 
-        <div className="bg-blue-50 border border-blue-100 text-[11px] text-blue-600 p-3 rounded-xl flex items-start gap-2 leading-relaxed">
+        <div className="bg-[#fffdf2] border border-black/10 text-[11px] text-black p-3 rounded-xl flex items-start gap-2 leading-relaxed">
           <Key className="w-4.5 h-4.5 shrink-0 mt-0.5" />
           <span>
             <strong>Note:</strong> Upon registration, your owner account and club registration will be created instantly.
@@ -202,7 +202,7 @@ export const OwnerRegister = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-750 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-blue-600/10 flex items-center justify-center gap-1.5 active:scale-98"
+          className="w-full bg-black hover:bg-zinc-800 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-black/10 flex items-center justify-center gap-1.5 active:scale-98"
         >
           <UserPlus className="w-4 h-4" /> Request Club Ownership
         </button>
@@ -210,7 +210,7 @@ export const OwnerRegister = () => {
 
       <p className="text-xs text-sports-gray text-center font-semibold">
         Already have an owner account?{' '}
-        <Link to="/login/owner" className="text-blue-600 hover:underline font-bold">Sign in here</Link>
+        <Link to="/login/owner" className="text-black hover:underline font-bold">Sign in here</Link>
       </p>
     </div>
   );

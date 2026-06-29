@@ -8,7 +8,7 @@ import MatchCard from '../../components/match/MatchCard';
 import PredictionModal from '../../components/match/PredictionModal';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { Trophy, Flame, CheckCircle, BarChart2, Star, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react';
+import { Activity, BarChart2, CalendarDays, ShieldAlert, Trophy, AlertCircle } from 'lucide-react';
 
 export const Home = () => {
   const { user } = useAuth();
@@ -112,7 +112,7 @@ export const Home = () => {
         </div>
         <button
           onClick={() => window.location.reload()}
-          className="bg-blue-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl"
+          className="bg-black text-white text-xs font-bold px-5 py-2.5 rounded-xl"
         >
           Retry
         </button>
@@ -131,58 +131,62 @@ export const Home = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-sm">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-black text-slate-900">
-            Welcome back, <span className="text-blue-600">{user?.name}</span>! 👋
+            Welcome back, <span className="text-black">{user?.name}</span>! 👋
           </h1>
           <p className="text-xs text-sports-gray font-semibold">
             Predicting for <span className="font-bold text-slate-800">{activeClub?.name}</span>.
           </p>
         </div>
 
-        <div className="flex gap-4">
-          <div className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-center shrink-0">
-            <span className="text-[9px] text-sports-gray uppercase block font-bold tracking-wider">Total Points</span>
-            <span className="text-sm font-black text-blue-600">{userTotalPoints} pts</span>
+        <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
+          <div className="bg-gradient-to-br from-[#fffdf2] to-white border border-black/10 px-5 py-4 rounded-2xl text-center shrink-0 shadow-sm min-w-[120px]">
+            <div className="mx-auto mb-2 w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center shadow-md shadow-black/10">
+              <Trophy className="w-4 h-4" />
+            </div>
+            <span className="text-xl font-black text-black leading-none block">{userTotalPoints}</span>
+            <span className="text-[10px] text-slate-500 uppercase block font-extrabold tracking-wider mt-1">Total Points</span>
           </div>
-          <div className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-center shrink-0">
-            <span className="text-[9px] text-sports-gray uppercase block font-bold tracking-wider">Predictions</span>
-            <span className="text-sm font-black text-amber-500">{userTotalPredictions}</span>
+          <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-100 px-5 py-4 rounded-2xl text-center shrink-0 shadow-sm min-w-[120px]">
+            <div className="mx-auto mb-2 w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/10">
+              <BarChart2 className="w-4 h-4" />
+            </div>
+            <span className="text-xl font-black text-amber-600 leading-none block">{userTotalPredictions}</span>
+            <span className="text-[10px] text-slate-500 uppercase block font-extrabold tracking-wider mt-1">Predictions</span>
           </div>
         </div>
       </div>
 
 
 
-      {/* Prediction Arena tabs */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-          <div className="flex items-center gap-1.5">
-            <Trophy className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-extrabold text-slate-900">Prediction Arena</h2>
-          </div>
-
-          <div className="bg-slate-100 border border-slate-200 p-1 rounded-xl flex gap-1">
+      {/* Match sections */}
+      <div className="space-y-5">
+        <div className="bg-white border border-slate-200 rounded-3xl p-2 shadow-sm">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => setActiveTab('open')}
-              className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center justify-center gap-2 text-xs sm:text-sm font-black px-3 py-3 rounded-2xl transition-all ${
                 activeTab === 'open'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-sports-gray hover:text-slate-950'
+                  ? 'bg-black text-white shadow-md shadow-black/10'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
+              <CalendarDays className="w-4 h-4" />
               Upcoming Matches
             </button>
             <button
               onClick={() => setActiveTab('results')}
-              className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center justify-center gap-2 text-xs sm:text-sm font-black px-3 py-3 rounded-2xl transition-all ${
                 activeTab === 'results'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-sports-gray hover:text-slate-950'
+                  ? 'bg-black text-white shadow-md shadow-black/10'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
-              Recent Results
+              <Activity className="w-4 h-4" />
+              Recent Matches
             </button>
           </div>
         </div>
@@ -219,7 +223,7 @@ export const Home = () => {
             </div>
           ) : (
             <EmptyState
-              title="No recent results"
+              title="No recent matches"
               description="There are no completed or live matches yet."
             />
           )

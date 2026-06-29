@@ -1,72 +1,91 @@
-import React from 'react';
-import { Award, Zap } from 'lucide-react';
-
-export const LeaderboardCard = ({ userRank, isCurrentUser }) => {
-  const { rank, name, avatar, points, accuracy } = userRank;
-
-  const getRankBadge = () => {
-    if (rank === 1) {
-      return (
-        <div className="w-6 h-6 rounded-full bg-yellow-500 text-black flex items-center justify-center text-xs font-black shadow-lg shadow-yellow-500/20">
-          🏆
-        </div>
-      );
-    }
-    if (rank === 2) {
-      return (
-        <div className="w-6 h-6 rounded-full bg-slate-300 text-black flex items-center justify-center text-xs font-black shadow-lg shadow-slate-300/20">
-          🥈
-        </div>
-      );
-    }
-    if (rank === 3) {
-      return (
-        <div className="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-amber-600/20">
-          🥉
-        </div>
-      );
-    }
-    return (
-      <span className="text-xs font-extrabold text-sports-gray w-6 text-center">
-        {rank}
-      </span>
-    );
+export const LeaderboardCard = ({ userRank, isCurrentUser, variant = 'row' }) => {
+  const { rank, name, avatar, points } = userRank;
+  const numericRank = Number(rank);
+  const rankMeta = {
+    1: {
+      badge: '🥇',
+      badgeClass: 'bg-amber-100 text-amber-700 border-amber-200',
+      cardClass: 'bg-amber-50/70 border-amber-200 shadow-amber-500/10',
+      pillClass: 'bg-amber-500 text-white',
+    },
+    2: {
+      badge: '🥈',
+      badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+      cardClass: 'bg-slate-50 border-slate-200 shadow-slate-500/10',
+      pillClass: 'bg-slate-700 text-white',
+    },
+    3: {
+      badge: '🥉',
+      badgeClass: 'bg-orange-100 text-orange-700 border-orange-200',
+      cardClass: 'bg-orange-50/70 border-orange-200 shadow-orange-500/10',
+      pillClass: 'bg-orange-500 text-white',
+    },
+  };
+  const meta = rankMeta[numericRank] || {
+    badge: rank,
+    badgeClass: isCurrentUser
+      ? 'bg-black text-white border-blue-600'
+      : 'bg-slate-100 text-slate-700 border-slate-200',
+    cardClass: isCurrentUser
+      ? 'bg-[#fffdf2] border-black/20 shadow-black/10'
+      : 'bg-white border-slate-200 shadow-slate-900/5',
+    pillClass: isCurrentUser
+      ? 'bg-black text-white'
+      : 'bg-slate-100 text-slate-900',
   };
 
+  if (variant === 'podium') {
+    const isFirst = numericRank === 1;
+
+    return (
+      <div className={`flex min-w-0 flex-1 flex-col items-center text-center ${isFirst ? '-mt-4' : 'mt-7'}`}>
+        <div className={`relative rounded-full p-1 shadow-lg ${numericRank === 1 ? 'bg-amber-100 shadow-amber-500/15' : numericRank === 2 ? 'bg-slate-100 shadow-slate-500/10' : 'bg-orange-100 shadow-orange-500/10'}`}>
+          <img
+            src={avatar || 'https://api.dicebear.com/7.x/pixel-art/svg'}
+            alt={name}
+            className={`${isFirst ? 'h-20 w-20' : 'h-16 w-16'} rounded-full border-4 border-white bg-slate-100 object-cover`}
+          />
+          <span className={`absolute -bottom-2 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border-2 border-white text-sm shadow-sm ${meta.badgeClass}`}>
+            {meta.badge}
+          </span>
+        </div>
+
+        <span className={`mt-4 max-w-[92px] truncate text-sm font-black leading-tight ${isCurrentUser ? 'text-black' : 'text-slate-950'}`}>
+          {name}
+        </span>
+        <span className={`mt-1 rounded-full px-2.5 py-1 text-[10px] font-black tabular-nums ${meta.pillClass}`}>
+          {points} pts
+        </span>
+      </div>
+    );
+  }
+
   return (
-    <div className={`flex items-center justify-between p-4 rounded-2xl border transition duration-200 ${
-      isCurrentUser 
-        ? 'bg-blue-50 border-blue-200 shadow-md shadow-blue-500/10' 
-        : 'bg-white border-slate-200 shadow-sm hover:border-slate-300'
-    }`}>
-      {/* Rank and User Details */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 flex justify-center items-center shrink-0">
-          {getRankBadge()}
-        </div>
-        <img
-          src={avatar || 'https://api.dicebear.com/7.x/pixel-art/svg'}
-          alt={name}
-          className="w-10 h-10 rounded-full border border-slate-200 bg-slate-50 object-cover shrink-0"
-        />
-        <div className="truncate">
-          <span className={`text-sm font-bold block truncate max-w-[150px] ${
-            isCurrentUser ? 'text-blue-700' : 'text-slate-900'
-          }`}>
-            {name}
-            {isCurrentUser && <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.5 rounded-md ml-1.5 shadow-sm">You</span>}
-          </span>
-          <span className="text-[10px] text-sports-gray flex items-center gap-1 font-semibold">
-            <Zap className="w-3 h-3 text-amber-500" /> {accuracy}% Accuracy
-          </span>
-        </div>
+    <div className={`flex items-center gap-3 rounded-2xl border px-3 py-2.5 shadow-sm transition duration-200 active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:shadow-md ${meta.cardClass}`}>
+      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-black tabular-nums ${meta.badgeClass}`}>
+        {meta.badge}
       </div>
 
-      {/* Points */}
-      <div className="text-right shrink-0">
-        <span className={`text-base font-black ${isCurrentUser ? 'text-blue-700' : 'text-slate-900'}`}>{points}</span>
-        <span className="text-[9px] text-sports-gray uppercase font-bold tracking-wider block">Points</span>
+      <img
+        src={avatar || 'https://api.dicebear.com/7.x/pixel-art/svg'}
+        alt={name}
+        className="h-9 w-9 shrink-0 rounded-full border border-white bg-slate-100 object-cover shadow-sm ring-1 ring-slate-200"
+      />
+
+      <div className="min-w-0 flex-1">
+        <span className={`block truncate text-sm font-bold leading-tight ${isCurrentUser ? 'text-black' : 'text-slate-950'}`}>
+          {name}
+        </span>
+        {isCurrentUser && (
+          <span className="mt-0.5 inline-flex rounded-full bg-black px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">
+            You
+          </span>
+        )}
       </div>
+
+      <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black tabular-nums ${meta.pillClass}`}>
+        {points} pts
+      </span>
     </div>
   );
 };

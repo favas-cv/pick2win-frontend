@@ -3,7 +3,7 @@ import { ArrowUpRight, TrendingUp } from 'lucide-react';
 
 export const AnalyticsCard = ({ title, metric, description, type = 'line', data = [] }) => {
   return (
-    <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-slate-700/80 transition duration-300">
+    <div className="glass-card border-slate-200 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-slate-300/80 transition duration-300">
       <div>
         <div className="flex justify-between items-start mb-2">
           <span className="text-xs font-bold text-sports-gray tracking-wider uppercase">{title}</span>
@@ -12,7 +12,7 @@ export const AnalyticsCard = ({ title, metric, description, type = 'line', data 
           </span>
         </div>
         <div className="flex items-baseline gap-2">
-          <h3 className="text-2xl font-black text-white">{metric}</h3>
+          <h3 className="text-2xl font-black text-slate-900">{metric}</h3>
           <span className="text-[10px] text-sports-gray font-medium">{description}</span>
         </div>
       </div>
@@ -53,7 +53,7 @@ export const AnalyticsCard = ({ title, metric, description, type = 'line', data 
                   style={{ height: `${val}%` }} 
                   className="w-full sports-gradient rounded-t-md min-h-[4px] hover:brightness-110 transition-all duration-300 relative group"
                 >
-                  <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 text-[8px] font-bold text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                  <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-50 border border-slate-200 text-[8px] font-bold text-slate-900 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
                     {val}%
                   </span>
                 </div>
@@ -63,7 +63,7 @@ export const AnalyticsCard = ({ title, metric, description, type = 'line', data 
                 <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
                   <div 
                     style={{ height: `${val}%` }} 
-                    className="w-full bg-slate-800 hover:bg-sports-green/80 rounded-t-md min-h-[4px] transition-all duration-300"
+                    className="w-full bg-slate-100 hover:bg-sports-green/80 rounded-t-md min-h-[4px] transition-all duration-300"
                   ></div>
                 </div>
               ))
@@ -72,7 +72,7 @@ export const AnalyticsCard = ({ title, metric, description, type = 'line', data 
         )}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-850/60 flex items-center justify-between text-[9px] text-sports-gray font-bold uppercase tracking-wider">
+      <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-[9px] text-sports-gray font-bold uppercase tracking-wider">
         <span className="flex items-center gap-1">
           <TrendingUp className="w-3.5 h-3.5 text-sports-green" /> 7d active activity
         </span>

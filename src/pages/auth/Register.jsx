@@ -47,7 +47,7 @@ export const Register = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50/80 border border-red-200 text-red-650 text-xs p-3 rounded-xl flex items-center gap-2">
+        <div className="bg-red-50/80 border border-red-200 text-red-600 text-xs p-3 rounded-xl flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{typeof error === 'object' ? JSON.stringify(error) : error}</span>
         </div>
@@ -65,7 +65,7 @@ export const Register = () => {
               type="text"
               placeholder="John Doe"
               {...register('name', { required: 'Name is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.name && <span className="text-[10px] text-red-500 block mt-1">{errors.name.message}</span>}
@@ -82,7 +82,7 @@ export const Register = () => {
               type="text"
               placeholder="+1234567890"
               {...register('phone', { required: 'Phone number is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
@@ -102,7 +102,7 @@ export const Register = () => {
                 required: 'Password is required', 
                 minLength: { value: 6, message: 'Password must be at least 6 characters' }
               })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.password1 && <span className="text-[10px] text-red-500 block mt-1">{errors.password1.message}</span>}
@@ -121,7 +121,7 @@ export const Register = () => {
               {...register('password2', { 
                 required: 'Please confirm password'
               })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.password2 && <span className="text-[10px] text-red-500 block mt-1">{errors.password2.message}</span>}
@@ -140,7 +140,7 @@ export const Register = () => {
               type="text"
               placeholder="e.g. BRAZIL10"
               {...register('token', { required: 'Invite Token is required to register' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
           </div>
           {errors.token && <span className="text-[10px] text-red-500 block mt-1">{errors.token.message}</span>}
@@ -149,7 +149,7 @@ export const Register = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-750 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-blue-600/10 flex items-center justify-center gap-1.5 active:scale-98"
+          className="w-full bg-black hover:bg-zinc-800 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-black/10 flex items-center justify-center gap-1.5 active:scale-98"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -164,11 +164,11 @@ export const Register = () => {
       <div className="text-center text-xs space-y-2 font-semibold">
         <p className="text-sports-gray">
           Already have a user account?{' '}
-          <Link to="/login/user" className="text-blue-600 hover:underline font-bold">Sign in here</Link>
+          <Link to="/login/user" className="text-black hover:underline font-bold">Sign in here</Link>
         </p>
         <p className="text-sports-gray">
           Are you a club owner?{' '}
-          <Link to="/register/owner" className="text-blue-600 hover:underline font-bold">Owner registration</Link>
+          <Link to="/register/owner" className="text-black hover:underline font-bold">Owner registration</Link>
         </p>
       </div>
     </div>

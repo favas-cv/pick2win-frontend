@@ -18,7 +18,7 @@ export const ForgotPassword = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-xl font-bold text-white">Reset password</h2>
+        <h2 className="text-xl font-bold text-slate-900">Reset password</h2>
         <p className="text-xs text-sports-gray mt-1 font-semibold">We will send instructions to restore your account access.</p>
       </div>
 
@@ -33,7 +33,7 @@ export const ForgotPassword = () => {
           </div>
           <Link
             to="/login"
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-3 rounded-xl transition flex items-center justify-center gap-1.5"
+            className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold py-3 rounded-xl transition flex items-center justify-center gap-1.5"
           >
             <ChevronLeft className="w-4 h-4" /> Return to Sign In
           </Link>
@@ -50,7 +50,7 @@ export const ForgotPassword = () => {
                 type="email"
                 placeholder="example@mail.com"
                 {...register('email', { required: 'Email is required' })}
-                className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-650 focus:border-sports-green focus:outline-none transition"
+                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
               />
             </div>
             {errors.email && <span className="text-[10px] text-red-500 block mt-1">{errors.email.message}</span>}
@@ -59,7 +59,7 @@ export const ForgotPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-sports-green hover:bg-sports-greenDark disabled:opacity-50 text-black text-sm font-black py-3 rounded-xl transition shadow-lg shadow-sports-green/10 flex items-center justify-center gap-1.5 active:scale-98"
+            className="w-full bg-sports-green hover:bg-sports-greenDark disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-sports-green/10 flex items-center justify-center gap-1.5 active:scale-98"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
@@ -70,7 +70,7 @@ export const ForgotPassword = () => {
 
           <Link
             to="/login"
-            className="w-full border border-slate-800 hover:bg-slate-900 text-sports-gray hover:text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1"
+            className="w-full border border-slate-200 hover:bg-slate-50 text-sports-gray hover:text-slate-900 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1"
           >
             <ChevronLeft className="w-4 h-4" /> Back to Sign In
           </Link>

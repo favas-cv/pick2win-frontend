@@ -1,31 +1,25 @@
-import React from 'react';
-import { Award } from 'lucide-react';
-
-export const UserRankCard = ({ rank, points, accuracy }) => {
+export const UserRankCard = ({ rank, points, name, avatar }) => {
   return (
-    <div className="bg-gradient-to-r from-sports-green/20 via-sports-green/10 to-transparent border border-sports-green/20 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl shadow-sports-green/5">
+    <div className="rounded-2xl border border-black/10 bg-white p-3 shadow-lg shadow-black/10">
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-sports-green text-black rounded-xl flex items-center justify-center font-extrabold shadow-lg shadow-sports-green/20">
-          <Award className="w-6 h-6" />
-        </div>
-        <div>
-          <h4 className="text-sm font-bold text-white leading-tight">Your Club Rank</h4>
-          <p className="text-xs text-sports-gray">Predict scores correctly to rise on the leaderboard!</p>
-        </div>
-      </div>
+        <img
+          src={avatar || 'https://api.dicebear.com/7.x/pixel-art/svg'}
+          alt={name || 'You'}
+          className="h-11 w-11 shrink-0 rounded-full border border-black/10 bg-slate-100 object-cover shadow-sm"
+        />
 
-      <div className="flex items-center gap-6 divide-x divide-slate-800">
-        <div className="text-center px-4">
-          <span className="text-[10px] text-sports-gray font-bold uppercase tracking-wider block">Rank</span>
-          <span className="text-xl font-black text-white">#{rank}</span>
+        <div className="min-w-0 flex-1">
+          <span className="block text-[10px] font-black uppercase tracking-wider text-black">My Rank</span>
+          <span className="block truncate text-sm font-black leading-tight text-slate-950">{name || 'You'}</span>
         </div>
-        <div className="text-center px-4">
-          <span className="text-[10px] text-sports-gray font-bold uppercase tracking-wider block">Points</span>
-          <span className="text-xl font-black text-sports-green">{points}</span>
+
+        <div className="shrink-0 rounded-2xl bg-[#fffdf2] px-3 py-2 text-center">
+          <span className="block text-[9px] font-black uppercase tracking-wider text-black">Rank</span>
+          <span className="block text-base font-black leading-tight text-black">{rank}</span>
         </div>
-        <div className="text-center px-4">
-          <span className="text-[10px] text-sports-gray font-bold uppercase tracking-wider block">Accuracy</span>
-          <span className="text-xl font-black text-sports-yellow">{accuracy}%</span>
+
+        <div className="shrink-0 rounded-full bg-black px-3 py-1.5 text-xs font-black tabular-nums text-white shadow-sm shadow-black/15">
+          {points} pts
         </div>
       </div>
     </div>

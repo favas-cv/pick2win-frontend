@@ -1,8 +1,8 @@
-import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/navigation/Navbar';
 import BottomNavigation from '../components/navigation/BottomNavigation';
+import HowToPlayButton from '../components/common/HowToPlayButton';
 
 export const UserLayout = () => {
   const { user, loading } = useAuth();
@@ -32,6 +32,7 @@ export const UserLayout = () => {
           <Outlet />
         </div>
       </main>
+      <HowToPlayButton />
       <BottomNavigation />
     </div>
   );

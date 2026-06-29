@@ -22,13 +22,13 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-      <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between space-y-4">
+      <div className="glass-card border-slate-200 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-sports-green/10 text-sports-green border border-sports-green/20 rounded-xl flex items-center justify-center shrink-0">
             <Link2 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">Invite Link</h3>
+            <h3 className="text-base font-bold text-slate-900">Invite Link</h3>
             <p className="text-xs text-sports-gray mt-0.5 leading-relaxed">
               Users registering through this link are automatically enrolled in your club.
             </p>
@@ -39,11 +39,11 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
             type="text"
             readOnly
             value={inviteLink}
-            className="flex-1 bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-[11px] text-sports-gray focus:outline-none truncate"
+            className="flex-1 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-[11px] text-sports-gray focus:outline-none truncate"
           />
           <button
             onClick={handleCopyLink}
-            className="bg-sports-green hover:bg-sports-greenDark text-black font-extrabold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1 shrink-0"
+            className="bg-sports-green hover:bg-sports-greenDark text-white font-extrabold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1 shrink-0"
           >
             {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             <span>{copiedLink ? 'Copied' : 'Copy'}</span>
@@ -51,13 +51,13 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
         </div>
       </div>
 
-      <div className="glass-card border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between space-y-4">
+      <div className="glass-card border-slate-200 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 bg-sports-yellow/10 text-sports-yellow border border-sports-yellow/20 rounded-xl flex items-center justify-center shrink-0">
             <Key className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">Registration Token</h3>
+            <h3 className="text-base font-bold text-slate-900">Registration Token</h3>
             <p className="text-xs text-sports-gray mt-0.5 leading-relaxed">
               Provides direct verification token logic for your invitees.
             </p>
@@ -68,11 +68,11 @@ export const InviteLinkCard = ({ inviteCode, regToken }) => {
             type="text"
             readOnly
             value={regToken}
-            className="flex-1 bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-[11px] font-mono text-slate-300 tracking-wider focus:outline-none"
+            className="flex-1 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-[11px] font-mono text-slate-700 tracking-wider focus:outline-none"
           />
           <button
             onClick={handleCopyToken}
-            className="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs px-3.5 py-2.5 rounded-xl transition border border-slate-700 flex items-center gap-1 shrink-0"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-extrabold text-xs px-3.5 py-2.5 rounded-xl transition border border-slate-300 flex items-center gap-1 shrink-0"
           >
             {copiedToken ? <Check className="w-4 h-4 text-sports-green" /> : <Copy className="w-4 h-4" />}
             <span>{copiedToken ? 'Copied' : 'Copy'}</span>

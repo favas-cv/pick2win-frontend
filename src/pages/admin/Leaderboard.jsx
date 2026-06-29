@@ -6,16 +6,16 @@ import { Award, Trophy, Medal } from 'lucide-react';
 
 const rankIcon = (rank) => {
   if (rank === 1) return <Trophy className="w-4 h-4 text-sports-yellow" />;
-  if (rank === 2) return <Medal className="w-4 h-4 text-slate-300" />;
+  if (rank === 2) return <Medal className="w-4 h-4 text-slate-700" />;
   if (rank === 3) return <Medal className="w-4 h-4 text-amber-600" />;
   return null;
 };
 
 const rankBadgeStyle = (rank) => {
   if (rank === 1) return 'bg-sports-yellow/10 border-sports-yellow/20 text-sports-yellow';
-  if (rank === 2) return 'bg-slate-300/10 border-slate-300/20 text-slate-300';
+  if (rank === 2) return 'bg-slate-300/10 border-slate-300/20 text-slate-700';
   if (rank === 3) return 'bg-amber-600/10 border-amber-600/20 text-amber-500';
-  return 'bg-slate-900 border-slate-800 text-sports-gray';
+  return 'bg-slate-50 border-slate-200 text-sports-gray';
 };
 
 export const Leaderboard = () => {
@@ -44,8 +44,8 @@ export const Leaderboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
           <Award className="w-6 h-6 text-sports-green" /> Global Leaderboard
         </h1>
         <p className="text-xs text-sports-gray mt-1">
@@ -68,8 +68,8 @@ export const Leaderboard = () => {
           {board.map((entry) => (
             <div
               key={entry.rank}
-              className={`glass-card border-slate-800 rounded-2xl px-5 py-4 flex items-center gap-4 hover:border-slate-700 transition duration-200 ${
-                entry.rank <= 3 ? 'border-slate-700' : ''
+              className={`glass-card border-slate-200 rounded-2xl px-5 py-4 flex items-center gap-4 hover:border-slate-300 transition duration-200 ${
+                entry.rank <= 3 ? 'border-slate-300' : ''
               }`}
             >
               {/* Rank Badge */}
@@ -80,7 +80,7 @@ export const Leaderboard = () => {
               </div>
 
               {/* Avatar initial */}
-              <div className="w-9 h-9 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center shrink-0 text-xs font-black text-sports-green">
+              <div className="w-9 h-9 bg-slate-100 border border-slate-300 rounded-xl flex items-center justify-center shrink-0 text-xs font-black text-sports-green">
                 {entry.name ? entry.name.charAt(0).toUpperCase() : '?'}
               </div>
 
@@ -91,7 +91,7 @@ export const Leaderboard = () => {
 
               {/* Points */}
               <div className="text-right shrink-0">
-                <span className="flex items-center gap-1.5 font-black text-base text-white">
+                <span className="flex items-center gap-1.5 font-black text-base text-slate-900">
                   <Trophy className="w-4 h-4 text-sports-yellow" />
                   {entry.points}
                 </span>

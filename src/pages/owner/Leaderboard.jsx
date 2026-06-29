@@ -45,7 +45,7 @@ export const Leaderboard = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse"></div>
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse"></div>
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -54,13 +54,13 @@ export const Leaderboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
             <Award className="w-6 h-6 text-sports-green" /> Club Leaderboard
           </h1>
           <p className="text-xs text-sports-gray mt-1">
-            Review prediction accuracy ranking tables for <span className="font-bold text-slate-200">{activeClub?.name}</span>.
+            Review prediction accuracy ranking tables for <span className="font-bold text-slate-900">{activeClub?.name}</span>.
           </p>
         </div>
 
@@ -70,10 +70,10 @@ export const Leaderboard = () => {
             <select
               value={selectedTournament || ''}
               onChange={(e) => setSelectedTournament(Number(e.target.value))}
-              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-sports-green transition"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-sports-green transition"
             >
               {tournaments.map((t) => (
-                <option key={t.id} value={t.id} className="bg-slate-900">
+                <option key={t.id} value={t.id} className="bg-slate-50">
                   {t.name}
                 </option>
               ))}

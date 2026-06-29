@@ -29,12 +29,12 @@ export const InviteLink = () => {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
           <Link2 className="w-6 h-6 text-sports-green" /> Invite Settings
         </h1>
         <p className="text-xs text-sports-gray mt-1">
-          Distribute codes and links to verify new registrants inside <span className="font-bold text-slate-200">{activeClub?.name}</span>.
+          Distribute codes and links to verify new registrants inside <span className="font-bold text-slate-900">{activeClub?.name}</span>.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export const InviteLink = () => {
         <button
           onClick={handleGenerateLink}
           disabled={loading}
-          className="bg-sports-green hover:bg-sports-greenDark text-black font-extrabold text-sm px-5 py-3 rounded-xl transition flex items-center gap-2 disabled:opacity-50"
+          className="bg-sports-green hover:bg-sports-greenDark text-white font-extrabold text-sm px-5 py-3 rounded-xl transition flex items-center gap-2 disabled:opacity-50"
         >
           <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           <span>{loading ? 'Generating...' : 'Generate New Link'}</span>

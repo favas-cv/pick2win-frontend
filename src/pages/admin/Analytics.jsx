@@ -7,8 +7,8 @@ export const Analytics = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
           <BarChart2 className="w-6 h-6 text-sports-green" /> Global Platform Analytics
         </h1>
         <p className="text-xs text-sports-gray mt-1">
@@ -42,23 +42,23 @@ export const Analytics = () => {
       </div>
 
       {/* Tabular Analytics Breakdowns */}
-      <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center gap-2 mb-4 border-b border-slate-850 pb-3">
+      <div className="glass-card border-slate-200 rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-4 border-b border-slate-200 pb-3">
           <TrendingUp className="w-5 h-5 text-sports-green" />
-          <h2 className="text-sm font-black text-white uppercase tracking-wider">Top Performing Clubs by Submissions</h2>
+          <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider">Top Performing Clubs by Submissions</h2>
         </div>
         <div className="overflow-x-auto text-xs font-semibold">
-          <table className="w-full text-left text-slate-200 border-collapse">
+          <table className="w-full text-left text-slate-900 border-collapse">
             <thead>
-              <tr className="bg-slate-900/60 border-b border-slate-800 text-[10px] text-sports-gray uppercase tracking-widest font-bold">
+              <tr className="bg-white border-b border-slate-200 text-[10px] text-sports-gray uppercase tracking-widest font-bold">
                 <th className="py-3 px-4">Club Name</th>
                 <th className="py-3 px-4 text-center">Active Members</th>
                 <th className="py-3 px-4 text-center">Avg Predictions / Match</th>
                 <th className="py-3 px-4 text-right">Engagement Index</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-850/60">
-              <tr className="hover:bg-slate-850/10 transition">
+            <tbody className="divide-y divide-slate-200/60">
+              <tr className="hover:bg-slate-50 transition">
                 <td className="py-3.5 px-4 flex items-center gap-2 font-bold">
                   <span>🇧🇷</span> Brazil Fans Club
                 </td>
@@ -66,7 +66,7 @@ export const Analytics = () => {
                 <td className="py-3.5 px-4 text-center">210</td>
                 <td className="py-3.5 px-4 text-right text-sports-green">92.4%</td>
               </tr>
-              <tr className="hover:bg-slate-850/10 transition">
+              <tr className="hover:bg-slate-50 transition">
                 <td className="py-3.5 px-4 flex items-center gap-2 font-bold">
                   <span>🇪🇸</span> Madridistas Hub
                 </td>
@@ -74,7 +74,7 @@ export const Analytics = () => {
                 <td className="py-3.5 px-4 text-center">540</td>
                 <td className="py-3.5 px-4 text-right text-sports-green">89.8%</td>
               </tr>
-              <tr className="hover:bg-slate-850/10 transition">
+              <tr className="hover:bg-slate-50 transition">
                 <td className="py-3.5 px-4 flex items-center gap-2 font-bold">
                   <span>👹</span> Red Devils United
                 </td>

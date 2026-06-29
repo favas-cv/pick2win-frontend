@@ -22,28 +22,28 @@ export const LandingPage = () => {
       <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 h-16">
         <div className="max-w-6xl mx-auto h-full px-4 flex items-center justify-between">
           <div className="flex items-center gap-1.5 font-bold text-lg text-slate-900">
-            <Trophy className="w-5 h-5 text-blue-600 fill-blue-600/10" />
+            <Trophy className="w-5 h-5 text-black fill-black/10" />
             <span className="font-black tracking-tight">
-              PRED<span className="text-blue-600">-iT</span>
+              PRED<span className="text-black">-iT</span>
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             <Link 
               to="/login/user" 
-              className="text-xs font-extrabold text-slate-650 hover:text-slate-900 transition px-2.5 py-2"
+              className="text-xs font-extrabold text-slate-600 hover:text-slate-900 transition px-2.5 py-2"
             >
               User Login
             </Link>
             <Link 
               to="/login/owner" 
-              className="text-xs font-extrabold text-slate-650 hover:text-slate-900 transition px-2.5 py-2"
+              className="text-xs font-extrabold text-slate-600 hover:text-slate-900 transition px-2.5 py-2"
             >
               Owner Login
             </Link>
             <Link 
               to="/register" 
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-4 py-2 rounded-xl transition shadow-lg shadow-blue-600/10 active:scale-95"
+              className="bg-black hover:bg-zinc-800 text-white text-xs font-black px-4 py-2 rounded-xl transition shadow-lg shadow-black/10 active:scale-95"
             >
               Register
             </Link>
@@ -53,13 +53,13 @@ export const LandingPage = () => {
 
       {/* 2. Hero Section */}
       <section className="py-20 md:py-28 px-4 text-center max-w-4xl mx-auto space-y-6">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-black text-blue-600 uppercase tracking-widest">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffdf2] border border-black/10 text-[10px] font-black text-black uppercase tracking-widest">
           <Zap className="w-3.5 h-3.5 animate-pulse" /> Sports Prediction SaaS
         </span>
         
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-sans text-slate-900 leading-[1.08] tracking-tight">
           Predict Scores.<br />
-          <span className="text-blue-600">Compete With Friends.</span><br />
+          <span className="text-black">Compete With Friends.</span><br />
           Climb The Leaderboard.
         </h1>
         
@@ -70,7 +70,7 @@ export const LandingPage = () => {
         <div className="flex flex-wrap items-center justify-center gap-3.5 pt-4">
           <Link
             to="/login/user"
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-black px-6 py-3 rounded-xl transition shadow-xl shadow-blue-600/10 flex items-center gap-1.5 active:scale-95"
+            className="bg-black hover:bg-zinc-800 text-white text-xs font-black px-6 py-3 rounded-xl transition shadow-xl shadow-black/10 flex items-center gap-1.5 active:scale-95"
           >
             <Play className="w-4 h-4 fill-white" /> Start Predicting
           </Link>
@@ -99,7 +99,7 @@ export const LandingPage = () => {
               { step: '04', title: 'Top Leaderboard', desc: 'Rise to the top of your club rankings.' }
             ].map((item, idx) => (
               <div key={idx} className="p-5 border border-slate-100 rounded-2xl bg-slate-50 relative overflow-hidden">
-                <span className="text-3xl font-black text-blue-600/10 absolute right-4 top-2 font-mono">{item.step}</span>
+                <span className="text-3xl font-black text-black/10 absolute right-4 top-2 font-mono">{item.step}</span>
                 <h3 className="text-sm font-bold text-slate-900 mb-1">{item.title}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
               </div>
@@ -129,7 +129,7 @@ export const LandingPage = () => {
       </section>
 
       {/* 5. Leaderboard Preview */}
-      <section className="bg-slate-100/50 py-16 border-t border-slate-250">
+      <section className="bg-slate-100/50 py-16 border-t border-slate-200">
         <div className="max-w-xl mx-auto px-4">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-black text-slate-900">Leaderboard Rankings</h2>
@@ -148,7 +148,7 @@ export const LandingPage = () => {
                   <span className="text-xs font-bold text-slate-900">{userRank.name}</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-black text-blue-600 block">{userRank.points} pts</span>
+                  <span className="text-xs font-black text-black block">{userRank.points} pts</span>
                   <span className="text-[9px] text-slate-400 font-bold block">{userRank.accuracy}% Accuracy</span>
                 </div>
               </div>
@@ -162,16 +162,16 @@ export const LandingPage = () => {
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-1">
             <div className="font-bold text-base text-slate-900">
-              PRED<span className="text-blue-600">-iT</span>
+              PRED<span className="text-black">-iT</span>
             </div>
             <p className="text-[10px] text-slate-400">© 2026 PRED-iT Inc. All rights reserved.</p>
           </div>
 
           <div className="flex gap-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
-            <Link to="/login/user" className="hover:text-blue-600">User Login</Link>
-            <Link to="/login/owner" className="hover:text-blue-600">Owner Login</Link>
-            <Link to="/login/admin" className="hover:text-blue-600">Admin Login</Link>
-            <Link to="/register" className="hover:text-blue-600">Register</Link>
+            <Link to="/login/user" className="hover:text-black">User Login</Link>
+            <Link to="/login/owner" className="hover:text-black">Owner Login</Link>
+            <Link to="/login/admin" className="hover:text-black">Admin Login</Link>
+            <Link to="/register" className="hover:text-black">Register</Link>
           </div>
         </div>
       </footer>

@@ -30,7 +30,7 @@ export const HistoryPage = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse"></div>
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse"></div>
         <LoadingSkeleton type="card" count={2} />
       </div>
     );
@@ -39,8 +39,8 @@ export const HistoryPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
           <History className="w-6 h-6 text-sports-green" /> Match History
         </h1>
         <p className="text-xs text-sports-gray mt-1">

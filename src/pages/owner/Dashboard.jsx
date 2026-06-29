@@ -65,7 +65,7 @@ export const Dashboard = () => {
       <div>
         <h1 className="text-xl md:text-2xl font-black text-slate-900">Club Owner Dashboard</h1>
         <p className="text-xs text-slate-500 mt-1">
-          Club: <span className="font-bold text-blue-600">{activeClub?.name || 'Loading...'}</span>
+          Club: <span className="font-bold text-black">{activeClub?.name || 'Loading...'}</span>
           {' · '}Club ID: <span className="font-mono text-slate-700">{activeClub?.id || '?'}</span>
         </p>
       </div>
@@ -83,7 +83,7 @@ export const Dashboard = () => {
           <button
             onClick={handleGenerateLink}
             disabled={generatingLink}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition flex items-center gap-2 disabled:opacity-50"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition flex items-center gap-2 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${generatingLink ? 'animate-spin' : ''}`} />
             <span>{generatingLink ? 'Generating...' : 'Generate New Link'}</span>
@@ -100,9 +100,9 @@ export const Dashboard = () => {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-500" /> Club Members
+              <Users className="w-5 h-5 text-black" /> Club Members
             </h2>
-            <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full">
+            <span className="bg-[#fffdf2] text-black text-xs font-bold px-2.5 py-1 rounded-full">
               {members.length} Total
             </span>
           </div>
@@ -122,7 +122,7 @@ export const Dashboard = () => {
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {members.map((member, idx) => (
                 <div key={member.id || idx} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                  <div className="w-9 h-9 bg-blue-50 border border-blue-100 rounded-full flex items-center justify-center shrink-0 text-base">👤</div>
+                  <div className="w-9 h-9 bg-[#fffdf2] border border-black/10 rounded-full flex items-center justify-center shrink-0 text-base">👤</div>
                   <div>
                     <p className="text-sm font-bold text-slate-900 capitalize">
                       {member.name || member.username || member.user?.name || member.user?.username || 'Member'}
@@ -140,8 +140,8 @@ export const Dashboard = () => {
 
       {/* ── Quick Links ───────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Link to="/owner/members" className="bg-white border border-slate-200 hover:border-blue-300 p-4 rounded-2xl flex items-center gap-3 transition shadow-sm">
-          <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0"><Users className="w-4 h-4" /></div>
+        <Link to="/owner/members" className="bg-white border border-slate-200 hover:border-black/30 p-4 rounded-2xl flex items-center gap-3 transition shadow-sm">
+          <div className="w-9 h-9 bg-[#fffdf2] text-black rounded-xl flex items-center justify-center shrink-0"><Users className="w-4 h-4" /></div>
           <span className="text-sm font-bold text-slate-800">Members Directory</span>
         </Link>
         <Link to="/owner/leaderboard" className="bg-white border border-slate-200 hover:border-amber-300 p-4 rounded-2xl flex items-center gap-3 transition shadow-sm">

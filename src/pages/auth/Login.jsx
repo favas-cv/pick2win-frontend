@@ -34,7 +34,7 @@ export const Login = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-xl font-bold text-white">Welcome back</h2>
+        <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
         <p className="text-xs text-sports-gray mt-1 font-semibold">Sign in to your account to predict and track scores.</p>
       </div>
 
@@ -57,7 +57,7 @@ export const Login = () => {
               type="text"
               placeholder="+1234567890"
               {...register('phone', { required: 'Phone number is required' })}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-650 focus:border-sports-green focus:outline-none transition"
+              className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
             />
           </div>
           {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
@@ -77,7 +77,7 @@ export const Login = () => {
               type="password"
               placeholder="••••••••"
               {...register('password', { required: 'Password is required' })}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-650 focus:border-sports-green focus:outline-none transition"
+              className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
             />
           </div>
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
@@ -86,7 +86,7 @@ export const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-sports-green hover:bg-sports-greenDark disabled:opacity-50 text-black text-sm font-black py-3 rounded-xl transition shadow-lg shadow-sports-green/10 flex items-center justify-center gap-1.5 active:scale-98"
+          className="w-full bg-sports-green hover:bg-sports-greenDark disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-sports-green/10 flex items-center justify-center gap-1.5 active:scale-98"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>

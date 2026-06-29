@@ -1,21 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useClub } from '../../context/ClubContext';
-import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from 'react';
 import { matchService } from '../../services/matchService';
 import TournamentCard from '../../components/tournament/TournamentCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { ShieldCheck, Trophy, ShieldAlert } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 export const Tournaments = () => {
-  const { user } = useAuth();
-  const { activeClub, memberships } = useClub();
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Check if membership is approved — real members are always Approved
-  const activeMembership = memberships.find(m => m.clubId === activeClub?.id);
-  const isApproved = !!activeMembership || !!activeClub;
 
   useEffect(() => {
     const fetchTournaments = async () => {
@@ -45,13 +37,9 @@ export const Tournaments = () => {
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
-          <Trophy className="w-6 h-6 text-blue-600" /> Enabled Tournaments
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
+          <Trophy className="w-6 h-6 text-black" /> Tournaments
         </h1>
-        <p className="text-xs text-sports-gray mt-1 flex items-center gap-1 font-semibold">
-          <ShieldCheck className="w-4 h-4 text-green-600 font-bold" /> 
-          Showing competitions activated by your club owner for <span className="font-bold text-slate-700">{activeClub?.name}</span>.
-        </p>
       </div>
 
       {tournaments.length > 0 ? (

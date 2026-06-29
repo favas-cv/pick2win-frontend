@@ -7,7 +7,7 @@ import { CheckSquare, Save, AlertCircle, CheckCircle } from 'lucide-react';
 const statusStyle = (status) => {
   switch (status) {
     case 'Completed':
-      return 'text-sports-gray bg-slate-900 border-slate-800';
+      return 'text-sports-gray bg-slate-50 border-slate-200';
     case 'Live':
       return 'text-red-400 bg-red-500/10 border-red-500/20';
     default:
@@ -98,7 +98,7 @@ export const Results = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse" />
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse" />
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -107,8 +107,8 @@ export const Results = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
           <CheckSquare className="w-6 h-6 text-sports-green" /> Result Entry
         </h1>
         <p className="text-xs text-sports-gray mt-1">
@@ -140,16 +140,16 @@ export const Results = () => {
             return (
               <div
                 key={match.id}
-                className="glass-card border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row justify-between items-center gap-6"
+                className="glass-card border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row justify-between items-center gap-6"
               >
                 {/* Match context */}
                 <div className="text-center md:text-left flex-1 min-w-0">
                   {match.tournament && (
-                    <span className="text-[9px] bg-slate-900 border border-slate-850 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider">
+                    <span className="text-[9px] bg-slate-50 border border-slate-200 px-2 py-0.5 rounded text-sports-gray font-bold uppercase tracking-wider">
                       {match.tournament.name}
                     </span>
                   )}
-                  <div className="text-sm font-extrabold text-white mt-1.5 flex items-center justify-center md:justify-start gap-2">
+                  <div className="text-sm font-extrabold text-slate-900 mt-1.5 flex items-center justify-center md:justify-start gap-2">
                     <span>{match.homeTeam?.name ?? '—'}</span>
                     <span className="text-sports-gray font-normal text-xs">vs</span>
                     <span>{match.awayTeam?.name ?? '—'}</span>
@@ -169,7 +169,7 @@ export const Results = () => {
                 </div>
 
                 {/* Score inputs */}
-                <div className="flex items-center gap-4 bg-slate-900/60 p-4 border border-slate-850 rounded-xl">
+                <div className="flex items-center gap-4 bg-white p-4 border border-slate-200 rounded-xl">
                   {/* Home team */}
                   <div className="flex flex-col items-center gap-1.5">
                     <span className="text-[9px] text-sports-gray uppercase font-bold tracking-wider truncate max-w-[72px]">
@@ -182,7 +182,7 @@ export const Results = () => {
                       onChange={(e) => handleScoreChange(match.id, 'homeScore', e.target.value)}
                       placeholder="0"
                       disabled={match.isFinished}
-                      className="w-12 h-10 text-center text-sm font-extrabold bg-slate-800 border border-slate-700 rounded-xl focus:border-sports-green focus:outline-none text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-12 h-10 text-center text-sm font-extrabold bg-slate-100 border border-slate-300 rounded-xl focus:border-sports-green focus:outline-none text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -200,7 +200,7 @@ export const Results = () => {
                       onChange={(e) => handleScoreChange(match.id, 'awayScore', e.target.value)}
                       placeholder="0"
                       disabled={match.isFinished}
-                      className="w-12 h-10 text-center text-sm font-extrabold bg-slate-800 border border-slate-700 rounded-xl focus:border-sports-green focus:outline-none text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-12 h-10 text-center text-sm font-extrabold bg-slate-100 border border-slate-300 rounded-xl focus:border-sports-green focus:outline-none text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -217,7 +217,7 @@ export const Results = () => {
                     <button
                       onClick={() => handleVerify(match.id)}
                       disabled={isSaving}
-                      className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-black text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 active:scale-95 shadow-md shadow-sports-green/5"
+                      className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 active:scale-95 shadow-md shadow-sports-green/5"
                     >
                       <Save className="w-4 h-4" />
                       {isSaving ? 'Saving…' : 'Verify Result'}

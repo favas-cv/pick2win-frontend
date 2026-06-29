@@ -37,7 +37,7 @@ export const ClubOwners = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 bg-slate-900 border border-slate-800 w-1/3 rounded-xl animate-pulse" />
+        <div className="h-10 bg-slate-50 border border-slate-200 w-1/3 rounded-xl animate-pulse" />
         <LoadingSkeleton type="table" />
       </div>
     );
@@ -49,9 +49,9 @@ export const ClubOwners = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
             <Users className="w-6 h-6 text-sports-green" /> Users
           </h1>
           <p className="text-xs text-sports-gray mt-1">
@@ -83,31 +83,31 @@ export const ClubOwners = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name or phone number…"
-            className="w-full sm:w-80 bg-slate-900/60 border border-slate-800 rounded-xl py-2.5 px-4 text-xs text-white placeholder-slate-600 focus:border-sports-green focus:outline-none transition"
+            className="w-full sm:w-80 bg-white border border-slate-200 rounded-xl py-2.5 px-4 text-xs text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
           />
         </div>
       )}
 
       {/* Users Table */}
       {filteredUsers.length > 0 ? (
-        <div className="glass-card border-slate-800 rounded-2xl overflow-hidden">
+        <div className="glass-card border-slate-200 rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-900/60 border-b border-slate-800 text-[10px] text-sports-gray uppercase tracking-widest font-bold">
+                <tr className="bg-white border-b border-slate-200 text-[10px] text-sports-gray uppercase tracking-widest font-bold">
                     <th className="py-3.5 px-5">Name</th>
                     <th className="py-3.5 px-5">Phone</th>
                     <th className="py-3.5 px-5">Points</th>
                     <th className="py-3.5 px-5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-850">
+              <tbody className="divide-y divide-slate-200">
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-slate-900/30 transition">
+                  <tr key={user.id} className="hover:bg-slate-50/30 transition">
                     {/* Name */}
                     <td className="py-4 px-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center shrink-0 text-xs font-black text-sports-green">
+                        <div className="w-8 h-8 bg-slate-100 border border-slate-300 rounded-xl flex items-center justify-center shrink-0 text-xs font-black text-sports-green">
                           {user.name ? user.name.charAt(0).toUpperCase() : '?'}
                         </div>
                         <span className="font-extrabold text-sm text-sports-green block truncate">{user.name}</span>
@@ -124,7 +124,7 @@ export const ClubOwners = () => {
 
                     {/* Total Points */}
                     <td className="py-4 px-5 text-center">
-                      <span className="flex items-center justify-center gap-1 font-extrabold text-white">
+                      <span className="flex items-center justify-center gap-1 font-extrabold text-slate-900">
                         <Trophy className="w-3.5 h-3.5 text-sports-yellow" />
                         {user.totalPoints ?? 0}
                       </span>

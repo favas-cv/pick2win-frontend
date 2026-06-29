@@ -65,8 +65,8 @@ export const ClubDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-slate-850 pb-4">
-        <h1 className="text-2xl font-black text-white flex items-center gap-2">
+      <div className="border-b border-slate-200 pb-4">
+        <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
           <Shield className="w-6 h-6 text-sports-green" /> Club Admin Dashboard
         </h1>
         <p className="text-xs text-sports-gray mt-1">
@@ -75,15 +75,15 @@ export const ClubDashboard = () => {
       </div>
 
       {/* Club Info */}
-      <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-white mb-2">{club.name}</h2>
+      <div className="glass-card border-slate-200 rounded-2xl p-6">
+        <h2 className="text-xl font-bold text-slate-900 mb-2">{club.name}</h2>
         <p className="text-sports-gray">Club ID: {club.id}</p>
         <p className="text-sports-gray">Location: {club.place || '—'}</p>
       </div>
 
       {/* Invite Link */}
-      <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+      <div className="glass-card border-slate-200 rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
           <LinkIcon className="w-5 h-5 text-sports-green" /> Invite Link
         </h2>
         <p className="text-sports-gray break-all">
@@ -92,14 +92,14 @@ export const ClubDashboard = () => {
       </div>
 
       {/* Members list */}
-      <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="glass-card border-slate-200 rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
           <Users className="w-5 h-5 text-sports-green" /> Members
         </h2>
         {members && members.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-sports-gray">
-              <thead className="text-xs uppercase bg-slate-800/50 text-slate-400">
+              <thead className="text-xs uppercase bg-slate-100/50 text-slate-400">
                 <tr>
                   <th className="px-4 py-3 rounded-tl-lg rounded-bl-lg">Name</th>
                   <th className="px-4 py-3">Phone</th>
@@ -108,8 +108,8 @@ export const ClubDashboard = () => {
               </thead>
               <tbody>
                 {members.map(member => (
-                  <tr key={member.id} className="border-b border-slate-800/50 last:border-0 hover:bg-slate-800/30 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-white capitalize">{member.name}</td>
+                  <tr key={member.id} className="border-b border-slate-200/50 last:border-0 hover:bg-slate-100/30 transition-colors">
+                    <td className="px-4 py-3 font-semibold text-slate-900 capitalize">{member.name}</td>
                     <td className="px-4 py-3 font-mono">{member.phone}</td>
                     <td className="px-4 py-3 capitalize">{member.role}</td>
                   </tr>
@@ -123,14 +123,14 @@ export const ClubDashboard = () => {
       </div>
 
       {/* Club Leaderboard */}
-      <div className="glass-card border-slate-800 rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="glass-card border-slate-200 rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
           <Trophy className="w-5 h-5 text-sports-yellow" /> Club Leaderboard
         </h2>
         {leaderboard && leaderboard.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-sports-gray">
-              <thead className="text-xs uppercase bg-slate-800/50 text-slate-400">
+              <thead className="text-xs uppercase bg-slate-100/50 text-slate-400">
                 <tr>
                   <th className="px-4 py-3 rounded-tl-lg rounded-bl-lg w-16">Rank</th>
                   <th className="px-4 py-3">Name</th>
@@ -139,18 +139,18 @@ export const ClubDashboard = () => {
               </thead>
               <tbody>
                 {leaderboard.map((entry, index) => (
-                  <tr key={entry.user || index} className="border-b border-slate-800/50 last:border-0 hover:bg-slate-800/30 transition-colors">
+                  <tr key={entry.user || index} className="border-b border-slate-200/50 last:border-0 hover:bg-slate-100/30 transition-colors">
                     <td className="px-4 py-3">
                       <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
                         index === 0 ? 'bg-yellow-500/20 text-yellow-500' : 
-                        index === 1 ? 'bg-slate-300/20 text-slate-300' : 
+                        index === 1 ? 'bg-slate-300/20 text-slate-700' : 
                         index === 2 ? 'bg-amber-700/20 text-amber-500' : 
-                        'bg-slate-800 text-slate-400'
+                        'bg-slate-100 text-slate-400'
                       }`}>
                         {index + 1}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-semibold text-white">{entry.username}</td>
+                    <td className="px-4 py-3 font-semibold text-slate-900">{entry.username}</td>
                     <td className="px-4 py-3 text-right font-bold text-sports-green">{entry.total_points}</td>
                   </tr>
                 ))}
