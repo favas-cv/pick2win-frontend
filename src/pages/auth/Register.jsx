@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Phone, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
+import { User, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
+import PhoneInput from '../../components/common/PhoneInput';
+import { stripPhoneSpaces } from '../../utils/phone';
+import { getApiErrorMessage } from '../../utils/apiError';
 
 export const Register = () => {
   const { register: registerUser } = useAuth();
@@ -11,7 +14,7 @@ export const Register = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
     const inviteParam = searchParams.get('invite') || searchParams.get('token');
@@ -26,14 +29,13 @@ export const Register = () => {
     try {
       await registerUser({
         name: data.name,
-        phone: data.phone,
-        password1: data.password1,
-        password2: data.password2,
+        phone: stripPhoneSpaces(data.phone),
+        password: data.password1,
         token: data.token
       });
-      navigate('/login/user');
+      navigate('/user/home');
     } catch (err) {
-      setError(err.response?.data?.token || err.response?.data?.non_field_errors || 'Registration failed. Please check inputs and try again.');
+      setError(getApiErrorMessage(err, 'Registration failed. Please check inputs and try again.'));
     } finally {
       setLoading(false);
     }
@@ -71,22 +73,7 @@ export const Register = () => {
           {errors.name && <span className="text-[10px] text-red-500 block mt-1">{errors.name.message}</span>}
         </div>
 
-        {/* Phone */}
-        <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
-              <Phone className="w-4 h-4" />
-            </span>
-            <input
-              type="text"
-              placeholder="+1234567890"
-              {...register('phone', { required: 'Phone number is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
-            />
-          </div>
-          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
-        </div>
+        <PhoneInput register={register} errors={errors} />
 
         {/* Password */}
         <div>
@@ -97,10 +84,10 @@ export const Register = () => {
             </span>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="8 character simple password"
               {...register('password1', { 
                 required: 'Password is required', 
-                minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                minLength: { value: 8, message: 'Password must be at least 8 characters' }
               })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
@@ -117,9 +104,10 @@ export const Register = () => {
             </span>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="Repeat the 8 character password"
               {...register('password2', { 
-                required: 'Please confirm password'
+                required: 'Please confirm password',
+                validate: (value) => value === watch('password1') || 'Passwords do not match'
               })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />

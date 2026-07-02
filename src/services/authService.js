@@ -2,12 +2,21 @@ import api from './api';
 
 export const authService = {
   login: async (phone, password) => {
-    const response = await api.post('/auth/login/', { phone, password });
+    const response = await api.post(
+      '/auth/login/',
+      { phone, password },
+      { skipAuthRedirect: true }
+    );
+    if (response.data?.error || !response.data?.token) {
+      const loginError = new Error(response.data?.error || 'Invalid credentials');
+      loginError.response = response;
+      throw loginError;
+    }
     return response.data; // returns { token, user_id, name, phone, role }
   },
   
   register: async (userData) => {
-    // userData must have: name, phone, password1, password2, token (invite token)
+    // Backend RegisterSerializer expects: name, phone, password, token.
     const response = await api.post('/auth/register/', userData);
     return response.data;
   },

@@ -25,6 +25,26 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  const applyAuthData = (data) => {
+    if (!data?.token) {
+      throw new Error('Invalid credentials');
+    }
+
+    const loggedUser = {
+      id: data.user_id,
+      name: data.name,
+      phone: data.phone,
+      role: data.role || 'user',
+      token: data.token,
+    };
+
+    setUser(loggedUser);
+    setToken(data.token);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(loggedUser));
+    return loggedUser;
+  };
+
   /**
    * login(phone, password, role)
    * `role` is determined by which login page the user came from:
@@ -39,21 +59,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const data = await authService.login(phone, password);
-
-      // Backend returns the correct role; fall back to 'user' if missing.
-      const loggedUser = {
-        id: data.user_id,
-        name: data.name,
-        phone: data.phone,
-        role: data.role || 'user',
-        token: data.token,
-      };
-
-      setUser(loggedUser);
-      setToken(data.token);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(loggedUser));
-      return loggedUser;
+      return applyAuthData(data);
     } catch (error) {
       throw error;
     } finally {
@@ -64,7 +70,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setLoading(true);
     try {
-      return await authService.register(userData);
+      const data = await authService.register(userData);
+      return applyAuthData(data);
     } catch (error) {
       throw error;
     } finally {

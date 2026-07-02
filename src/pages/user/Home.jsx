@@ -56,7 +56,11 @@ export const Home = () => {
 
   const handlePredictionSubmit = async (matchId, scoreA, scoreB) => {
     try {
-      const newPrediction = await predictionService.submitPrediction(matchId, scoreA, scoreB);
+      const existingPrediction = predictions.find(p => p.matchId === matchId);
+      const newPrediction = existingPrediction
+        ? await predictionService.updatePrediction(existingPrediction.id, scoreA, scoreB)
+        : await predictionService.submitPrediction(matchId, scoreA, scoreB);
+
       setPredictions(prev => {
         const existingIdx = prev.findIndex(p => p.matchId === matchId);
         if (existingIdx !== -1) {

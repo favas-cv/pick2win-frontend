@@ -107,7 +107,6 @@ export const predictionService = {
     cache.myPredictions.timestamp = 0; // invalidate cache
     return normalizePrediction(response.data);
   },
-
   /**
    * PATCH /api/predictions/predict/<pk>/
    * Update an existing prediction before the lock time.

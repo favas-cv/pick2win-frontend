@@ -64,7 +64,11 @@ export const TournamentDetails = () => {
   const handlePredictionSubmit = async (matchId, scoreA, scoreB) => {
     if (!activeClub) return;
     try {
-      const newPrediction = await predictionService.submitPrediction(matchId, scoreA, scoreB, activeClub.id);
+      const existingPrediction = predictions.find(p => p.matchId === matchId);
+      const newPrediction = existingPrediction
+        ? await predictionService.updatePrediction(existingPrediction.id, scoreA, scoreB)
+        : await predictionService.submitPrediction(matchId, scoreA, scoreB, activeClub.id);
+
       setPredictions(prev => {
         const existingIdx = prev.findIndex(p => p.matchId === matchId);
         if (existingIdx !== -1) {

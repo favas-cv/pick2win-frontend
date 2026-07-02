@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
+import { Lock, LogIn, AlertCircle } from 'lucide-react';
+import PhoneInput from '../../components/common/PhoneInput';
+import { stripPhoneSpaces } from '../../utils/phone';
+import { getApiErrorMessage } from '../../utils/apiError';
 
 export const AdminLogin = () => {
   const { login } = useAuth();
@@ -10,16 +13,16 @@ export const AdminLogin = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onChange' });
 
   const onSubmit = async (data) => {
     setError('');
     setLoading(true);
     try {
-      await login(data.phone, data.password, 'admin');
+      await login(stripPhoneSpaces(data.phone), data.password, 'admin');
       navigate('/admin/dashboard');
     } catch (err) {
-      setError('Invalid admin credentials.');
+      setError(getApiErrorMessage(err, 'Invalid admin credentials.'));
     } finally {
       setLoading(false);
     }
@@ -45,22 +48,7 @@ export const AdminLogin = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Phone */}
-        <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
-              <Mail className="w-4 h-4" />
-            </span>
-            <input
-              type="text"
-              placeholder="7306656998"
-              {...register('phone', { required: 'Phone is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
-            />
-          </div>
-          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
-        </div>
+        <PhoneInput register={register} errors={errors} />
 
         {/* Password */}
         <div>

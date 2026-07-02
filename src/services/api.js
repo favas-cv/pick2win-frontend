@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://pick2win-chase-skbad.up.railway.app/api';
+const API_URL = 'http://127.0.0.1:8000/api/'; //import.meta.env.VITE_API_URL || 
 console.log("API URL:", API_URL);
 const api = axios.create({
   baseURL: API_URL,
@@ -25,7 +25,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !error.config?.skipAuthRedirect) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       // Redirect to login without triggering a full React re-render loop

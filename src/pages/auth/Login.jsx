@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Phone, Lock, LogIn, AlertCircle } from 'lucide-react';
+import { Lock, LogIn, AlertCircle } from 'lucide-react';
+import PhoneInput from '../../components/common/PhoneInput';
+import { stripPhoneSpaces } from '../../utils/phone';
+import { getApiErrorMessage } from '../../utils/apiError';
 
 export const Login = () => {
   const { login } = useAuth();
@@ -10,13 +13,13 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' });
 
   const onSubmit = async (data) => {
     setError('');
     setLoading(true);
     try {
-      const loggedUser = await login(data.phone, data.password);
+      const loggedUser = await login(stripPhoneSpaces(data.phone), data.password);
       if (loggedUser.role === 'admin') {
         navigate('/admin/dashboard');
       } else if (loggedUser.role === 'club_owner') {
@@ -25,7 +28,7 @@ export const Login = () => {
         navigate('/user/home');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid phone or password.');
+      setError(getApiErrorMessage(err, 'Invalid phone or password.'));
     } finally {
       setLoading(false);
     }
@@ -46,22 +49,11 @@ export const Login = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Phone Input */}
-        <div>
-          <label className="text-[10px] font-bold text-sports-gray uppercase tracking-wider block mb-1.5">Phone Number</label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-sports-gray">
-              <Phone className="w-4 h-4" />
-            </span>
-            <input
-              type="text"
-              placeholder="+1234567890"
-              {...register('phone', { required: 'Phone number is required' })}
-              className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-sports-green focus:outline-none transition"
-            />
-          </div>
-          {errors.phone && <span className="text-[10px] text-red-500 block mt-1">{errors.phone.message}</span>}
-        </div>
+        <PhoneInput
+          register={register}
+          errors={errors}
+          inputClassName="bg-white border-slate-200 focus:border-sports-green"
+        />
 
         {/* Password Input */}
         <div>
