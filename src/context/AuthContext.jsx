@@ -90,11 +90,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const confirmLogout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setShowLogoutModal(false);
+  };
+
+  const logout = () => {
+    setShowLogoutModal(true);
   };
 
   return (
@@ -103,7 +110,43 @@ export const AuthProvider = ({ children }) => {
       login, register, registerClubOwner, logout,
     }}>
       {children}
+      {showLogoutModal && (
+        <LogoutConfirmationModal
+          onConfirm={confirmLogout}
+          onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
     </AuthContext.Provider>
+  );
+};
+
+const LogoutConfirmationModal = ({ onConfirm, onCancel }) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl border border-slate-100 transform transition-all animate-scaleIn">
+        <h3 className="text-lg font-black text-slate-900 leading-6">Log Out</h3>
+        <p className="mt-2.5 text-xs font-semibold leading-relaxed text-slate-500">
+          Are you sure you want to log out?<br />
+          Make sure you remember your password before continuing.
+        </p>
+        <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full sm:flex-1 py-3 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 active:bg-slate-100 transition duration-150 cursor-pointer text-center"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="w-full sm:flex-1 py-3 px-4 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 active:bg-red-800 shadow-md shadow-red-200/50 transition duration-150 cursor-pointer text-center"
+          >
+            Log Out
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
