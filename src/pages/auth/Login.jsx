@@ -38,7 +38,7 @@ export const Login = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
-        <p className="text-xs text-sports-gray mt-1 font-semibold">Sign in to your account to predict and track scores.</p>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Sign in to your Pick2Win account to pick and track scores.</p>
       </div>
 
       {error && (

@@ -33,8 +33,8 @@ export const OwnerRegister = () => {
       navigate('/login/owner');
     } catch (err) {
       setError(
-        err.response?.data 
-          ? Object.entries(err.response.data).map(([k, v]) => `${k}: ${v}`).join(', ') 
+        err.response?.data
+          ? Object.entries(err.response.data).map(([k, v]) => `${k}: ${v}`).join(', ')
           : 'Registration failed. Please check inputs and try again.'
       );
     } finally {
@@ -86,8 +86,8 @@ export const OwnerRegister = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="8 character password"
-              {...register('password', { 
-                required: 'Password is required', 
+              {...register('password', {
+                required: 'Password is required',
                 minLength: { value: 8, message: 'Password must be at least 8 characters' }
               })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
@@ -155,7 +155,7 @@ export const OwnerRegister = () => {
             </span>
             <input
               type="text"
-              placeholder="chase-skbad"
+              placeholder="chase-sideeqabad"
               {...register('slug', { required: 'Slug is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />

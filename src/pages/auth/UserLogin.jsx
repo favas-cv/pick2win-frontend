@@ -33,7 +33,7 @@ export const UserLogin = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">User Login</h2>
-        <p className="text-xs text-sports-gray mt-1">Sign in to predict scores and track standup ratings.</p>
+        <p className="text-xs text-sports-gray mt-1">Sign in to pick scores and track your standings on Pick2Win.</p>
       </div>
 
       {error && (

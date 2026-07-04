@@ -25,8 +25,7 @@ export const ClubSelector = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 bg-white hover:bg-slate-50 transition px-3 py-1.5 rounded-xl border border-slate-200 text-sm font-semibold max-w-[200px]"
       >
-        <span className="text-base">{activeClub.logo}</span>
-        <span className="truncate max-w-[100px] text-slate-900">{activeClub.name}</span>
+        <span className="truncate max-w-[140px] text-slate-900">{activeClub.name}</span>
         <ChevronDown className={`w-4 h-4 text-sports-gray transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -46,7 +45,6 @@ export const ClubSelector = () => {
                 className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-slate-100/40 text-sm text-left transition"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-base">{club.logo}</span>
                   <span className={`font-medium ${activeClub.id === club.id ? 'text-sports-green' : 'text-slate-700'}`}>
                     {club.name}
                   </span>

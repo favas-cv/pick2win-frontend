@@ -47,7 +47,7 @@ export const Register = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">User Registration</h2>
-        <p className="text-xs text-sports-gray mt-1 font-semibold">Join Pick2Win and start predicting match scores.</p>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Join Pick2Win & Chase sideeqabad — start picking match scores.</p>
       </div>
 
       {error && (
@@ -87,8 +87,8 @@ export const Register = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="8 character simple password"
-              {...register('password1', { 
-                required: 'Password is required', 
+              {...register('password1', {
+                required: 'Password is required',
                 minLength: { value: 8, message: 'Password must be at least 8 characters' }
               })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
@@ -115,7 +115,7 @@ export const Register = () => {
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Repeat the 8 character password"
-              {...register('password2', { 
+              {...register('password2', {
                 required: 'Please confirm password',
                 validate: (value) => value === watch('password1') || 'Passwords do not match'
               })}
@@ -144,7 +144,7 @@ export const Register = () => {
             </span>
             <input
               type="text"
-              placeholder="e.g. BRAZIL10"
+              placeholder="e.g. CHASE10"
               {...register('token', { required: 'Invite Token is required to register' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />

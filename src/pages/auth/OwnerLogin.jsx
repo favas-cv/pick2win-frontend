@@ -33,7 +33,7 @@ export const OwnerLogin = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">Club Login</h2>
-        <p className="text-xs text-sports-gray mt-1 font-semibold">Sign in to manage members, active tournaments and invites.</p>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Sign in to manage your club on Pick2Win.</p>
       </div>
 
       {error && (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Trophy } from 'lucide-react';
+import pick2winLogo from '../assets/pick2winlogo.jpeg';
 
 export const AuthLayout = () => {
   const { user } = useAuth();
@@ -21,14 +21,23 @@ export const AuthLayout = () => {
 
       <div className="w-full max-w-md z-10">
         <div className="text-center mb-8 flex flex-col items-center">
-          <Link to="/" className="flex items-center gap-1.5 font-bold text-2xl text-slate-900 mb-2">
-            <Trophy className="w-6 h-6 text-black fill-black/10 shadow-sm" />
-            <span className="font-black tracking-tight">
-              PRED<span className="text-black">-iT</span>
-            </span>
+          <Link to="/" className="flex items-center gap-3 mb-3">
+            <img
+              src={pick2winLogo}
+              alt="Pick2Win"
+              className="h-14 w-auto rounded-xl border border-black/10 bg-white object-contain shadow-sm"
+            />
+            <img
+              src="/favicon.png"
+              alt="Chase sideeqabad"
+              className="h-14 w-auto rounded-xl border border-black/10 bg-white object-contain shadow-sm"
+            />
           </Link>
-          <p className="text-sports-gray text-xs font-semibold">
-            Premium Multi-Club Sports Prediction SaaS
+          <span className="font-black tracking-tight text-2xl text-slate-900">
+            Pick2Win
+          </span>
+          <p className="text-sports-gray text-xs font-semibold mt-1">
+            Associated with Chase sideeqabad
           </p>
         </div>
 

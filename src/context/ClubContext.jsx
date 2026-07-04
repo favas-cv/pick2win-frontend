@@ -38,9 +38,8 @@ export const ClubProvider = ({ children }) => {
         } else if (Array.isArray(response.data)) {
           myClubs = response.data;
         }
-        const normalizedClubs = myClubs.map((club, idx) => ({
+        const normalizedClubs = myClubs.map((club) => ({
           ...club,
-          logo: club.logo || ['🇧🇷', '🇪🇸', '👹', '⚽', '🏆'][idx % 5],
         }));
 
         setClubs(normalizedClubs);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, ShieldCheck, Zap, Award, ArrowRight, Play, Compass } from 'lucide-react';
+import { Zap, Compass, Play, Phone, Linkedin, Instagram, Code2, Terminal } from 'lucide-react';
+import pick2winLogo from '../assets/pick2winlogo.jpeg';
 
 export const LandingPage = () => {
   const tournaments = [
@@ -10,22 +11,18 @@ export const LandingPage = () => {
     { name: 'ISL League', logo: '⚽', sport: 'Football', matches: '110 Matches' }
   ];
 
-  const leaders = [
-    { rank: 1, name: 'Lucas Silva', points: 195, accuracy: 78, logo: '🇧🇷' },
-    { rank: 2, name: 'Beatriz Costa', points: 182, accuracy: 72, logo: '🇪🇸' },
-    { rank: 3, name: 'Thiago Santos', points: 176, accuracy: 68, logo: '👹' }
-  ];
-
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
-      {/* 1. Top Navigation */}
+      {/* Header */}
       <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 h-16">
         <div className="max-w-6xl mx-auto h-full px-4 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 font-bold text-lg text-slate-900">
-            <Trophy className="w-5 h-5 text-black fill-black/10" />
-            <span className="font-black tracking-tight">
-              PRED<span className="text-black">-iT</span>
-            </span>
+          <div className="flex items-center gap-2 font-bold text-lg text-slate-900">
+            <img
+              src={pick2winLogo}
+              alt="Pick2Win Logo"
+              className="h-10 w-auto rounded-xl border border-black/10 bg-white object-contain shadow-sm"
+            />
+            <span className="font-black tracking-tight">Pick2Win</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -51,10 +48,10 @@ export const LandingPage = () => {
         </div>
       </header>
 
-      {/* 2. Hero Section */}
+      {/* Hero Section */}
       <section className="py-20 md:py-28 px-4 text-center max-w-4xl mx-auto space-y-6">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffdf2] border border-black/10 text-[10px] font-black text-black uppercase tracking-widest">
-          <Zap className="w-3.5 h-3.5 animate-pulse" /> Sports Prediction SaaS
+          <Zap className="w-3.5 h-3.5 animate-pulse" /> Sports Prediction Platform
         </span>
         
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-sans text-slate-900 leading-[1.08] tracking-tight">
@@ -83,7 +80,7 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* 3. How It Works */}
+      {/* How It Works */}
       <section className="bg-white py-16 border-y border-slate-200">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -108,18 +105,18 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* 4. Featured Tournaments Preview */}
+      {/* Upcoming Tournaments */}
       <section className="py-16 max-w-5xl mx-auto px-4 w-full">
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h2 className="text-2xl font-black text-slate-900">Featured Tournaments</h2>
-            <p className="text-xs text-slate-500 mt-1">Predictions active across top leagues.</p>
+            <h2 className="text-2xl font-black text-slate-900">Upcoming Tournaments</h2>
+            <p className="text-xs text-slate-500 mt-1">Predictions active across upcoming leagues.</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {tournaments.map((tour, idx) => (
-            <div key={idx} className="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm text-center flex flex-col items-center">
+            <div key={idx} className="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm text-center flex flex-col items-center hover:shadow-md transition">
               <span className="text-3xl mb-3 block">{tour.logo}</span>
               <h4 className="text-xs font-bold text-slate-900 leading-tight">{tour.name}</h4>
               <span className="text-[10px] text-slate-400 mt-1.5 block uppercase tracking-wider font-extrabold">{tour.matches}</span>
@@ -128,50 +125,71 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* 5. Leaderboard Preview */}
-      <section className="bg-slate-100/50 py-16 border-t border-slate-200">
-        <div className="max-w-xl mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-black text-slate-900">Leaderboard Rankings</h2>
-            <p className="text-xs text-slate-500 mt-1">Review the top predictors on the network.</p>
-          </div>
+      {/* Footer */}
+      <footer className="bg-slate-950 text-slate-400 py-12 mt-auto font-sans border-t border-slate-900">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Left side: Logo & SaaS Tagline */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <img
+                  src={pick2winLogo}
+                  alt="Pick2Win Logo"
+                  className="h-9 w-auto rounded-xl border border-white/10 bg-white object-contain shadow-sm"
+                />
+                <span className="font-black text-base tracking-tight text-white">Pick2Win</span>
+              </div>
+              <p className="text-xs text-slate-400 font-medium">
+                A Premium Multi-Club Sports Prediction SaaS
+              </p>
+              <p className="text-[11px] text-slate-500 font-medium">
+                © {new Date().getFullYear()} Pick2Win. All rights reserved.
+              </p>
+            </div>
 
-          <div className="space-y-2.5">
-            {leaders.map((userRank) => (
-              <div 
-                key={userRank.rank} 
-                className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-extrabold text-slate-400 w-4 text-center">#{userRank.rank}</span>
-                  <span className="text-xl">{userRank.logo}</span>
-                  <span className="text-xs font-bold text-slate-900">{userRank.name}</span>
+            {/* Right side: Developer Setup card */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 md:max-w-sm md:ml-auto w-full">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                  <Terminal className="w-3.5 h-3.5 text-green-400" /> developer_environment
+                </span>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Code2 className="w-4 h-4 text-sky-400" />
+                  <span className="text-white font-bold text-sm">Muhammed Favas CV</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-xs font-black text-black block">{userRank.points} pts</span>
-                  <span className="text-[9px] text-slate-400 font-bold block">{userRank.accuracy}% Accuracy</span>
+                <div className="text-xs text-slate-455 font-mono pl-6 text-slate-400">
+                  ~ python_fullstack_developer
+                </div>
+                
+                <div className="pt-3 border-t border-slate-850 flex flex-col gap-2 pl-6 text-xs font-mono">
+                  <a href="tel:7306656998" className="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <Phone className="w-3.5 h-3.5 text-slate-400" /> 7306656998
+                  </a>
+                  <div className="flex gap-4 mt-1">
+                    <a 
+                      href="https://in.linkedin.com/in/muhammed-favas-cv-3a397336a" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="flex items-center gap-1 text-slate-400 hover:text-white transition"
+                    >
+                      <Linkedin className="w-3.5 h-3.5 text-slate-400" /> LinkedIn
+                    </a>
+                    <a 
+                      href="https://www.instagram.com/fawaz__muhd?igsh=MWNzMGtjcHBxaWlzaQ%3D%3D&utm_source=qr" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="flex items-center gap-1 text-slate-400 hover:text-white transition"
+                    >
+                      <Instagram className="w-3.5 h-3.5 text-slate-400" /> Instagram
+                    </a>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Footer */}
-      <footer className="mt-auto bg-white border-t border-slate-200 py-10">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <div className="space-y-1">
-            <div className="font-bold text-base text-slate-900">
-              PRED<span className="text-black">-iT</span>
             </div>
-            <p className="text-[10px] text-slate-400">© 2026 Pick2Win Inc. All rights reserved.</p>
-          </div>
-
-          <div className="flex gap-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
-            <Link to="/login/user" className="hover:text-black">User Login</Link>
-            <Link to="/login/owner" className="hover:text-black">Owner Login</Link>
-            <Link to="/login/admin" className="hover:text-black">Admin Login</Link>
-            <Link to="/register" className="hover:text-black">Register</Link>
           </div>
         </div>
       </footer>
