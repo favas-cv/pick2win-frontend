@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Compass, Play, Phone, Linkedin, Instagram, Code2, Terminal } from 'lucide-react';
+import { Zap, Compass, Play } from 'lucide-react';
 import pick2winLogo from '../assets/pick2winlogo.jpeg';
 
 export const LandingPage = () => {
@@ -139,7 +139,7 @@ export const LandingPage = () => {
                 />
                 <span className="font-black text-base tracking-tight text-white">Pick2Win</span>
               </div>
-              <p className="text-xs text-slate-400 font-medium">
+              <p className="text-xs text-slate-400 font-medium font-sans">
                 A Premium Multi-Club Sports Prediction SaaS
               </p>
               <p className="text-[11px] text-slate-500 font-medium">
@@ -152,22 +152,24 @@ export const LandingPage = () => {
               <div className="flex items-center gap-2 mb-3">
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
                 <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                  <Terminal className="w-3.5 h-3.5 text-green-400" /> developer_environment
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400 inline-block mr-1"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                  developer_environment
                 </span>
               </div>
               
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Code2 className="w-4 h-4 text-sky-400" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-400 inline-block"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                   <span className="text-white font-bold text-sm">Muhammed Favas CV</span>
                 </div>
-                <div className="text-xs text-slate-455 font-mono pl-6 text-slate-400">
+                <div className="text-xs font-mono pl-6 text-slate-400">
                   ~ python_fullstack_developer
                 </div>
                 
                 <div className="pt-3 border-t border-slate-850 flex flex-col gap-2 pl-6 text-xs font-mono">
                   <a href="tel:7306656998" className="flex items-center gap-2 text-slate-400 hover:text-white transition">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" /> 7306656998
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 inline-block"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    7306656998
                   </a>
                   <div className="flex gap-4 mt-1">
                     <a 
@@ -176,7 +178,8 @@ export const LandingPage = () => {
                       rel="noopener noreferrer" 
                       className="flex items-center gap-1 text-slate-400 hover:text-white transition"
                     >
-                      <Linkedin className="w-3.5 h-3.5 text-slate-400" /> LinkedIn
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 inline-block"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                      LinkedIn
                     </a>
                     <a 
                       href="https://www.instagram.com/fawaz__muhd?igsh=MWNzMGtjcHBxaWlzaQ%3D%3D&utm_source=qr" 
@@ -184,7 +187,8 @@ export const LandingPage = () => {
                       rel="noopener noreferrer" 
                       className="flex items-center gap-1 text-slate-400 hover:text-white transition"
                     >
-                      <Instagram className="w-3.5 h-3.5 text-slate-400" /> Instagram
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 inline-block"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                      Instagram
                     </a>
                   </div>
                 </div>
