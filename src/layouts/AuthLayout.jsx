@@ -1,12 +1,13 @@
 import React from 'react';
-import { Outlet, Navigate, Link } from 'react-router-dom';
+import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import pick2winLogo from '../assets/pick2winlogo.jpeg';
 
 export const AuthLayout = () => {
   const { user } = useAuth();
+  const location = useLocation();
 
-  if (user) {
+  if (user && !location.pathname.startsWith('/reset-password')) {
     if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
     if (user.role === 'club_owner') return <Navigate to="/owner/dashboard" replace />;
     return <Navigate to="/user/home" replace />;

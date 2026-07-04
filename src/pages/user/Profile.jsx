@@ -115,6 +115,42 @@ export const Profile = () => {
   const onUploadImage = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    // Requirement 3 & 4: Log file details to browser console before uploading
+    const fileSizeBytes = file.size;
+    const fileSizeMB = (fileSizeBytes / (1024 * 1024)).toFixed(2);
+    console.log("Selected File Debugging Info:");
+    console.log(`- Name: ${file.name}`);
+    console.log(`- Type: ${file.type}`);
+    console.log(`- Size: ${fileSizeBytes} bytes (${fileSizeMB} MB)`);
+    console.log(`- Last Modified: ${file.lastModified} (${new Date(file.lastModified).toISOString()})`);
+
+    // Requirement 5: Detect unsupported image formats (such as image/heic or image/heif)
+    const fileType = (file.type || '').toLowerCase();
+    const fileName = (file.name || '').toLowerCase();
+    const isUnsupported = fileType === 'image/heic' || 
+                          fileType === 'image/heif' || 
+                          fileName.endsWith('.heic') || 
+                          fileName.endsWith('.heif');
+    
+    if (isUnsupported) {
+      const unsupportedMsg = "The selected image format (HEIC/HEIF) is not supported. Please convert it to a standard format (like JPEG, PNG, or WebP) and try again.";
+      setError(unsupportedMsg);
+      console.warn("Upload prevented: Unsupported image format (HEIC/HEIF).");
+      event.target.value = '';
+      return;
+    }
+
+    // Validate file size: hard block only if > 10 MB, but display 5 MB limit in user-facing error.
+    const maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+    if (fileSizeBytes > maxSizeBytes) {
+      const sizeMsg = `The selected file is too large (${fileSizeMB} MB). The maximum allowed size is 5 MB.`;
+      setError(sizeMsg);
+      console.warn(`Upload prevented: File size (${fileSizeMB} MB) exceeds the 10 MB hard limit (displayed 5 MB to user).`);
+      event.target.value = '';
+      return;
+    }
+
     setUploading(true);
     setError('');
     try {
@@ -124,6 +160,14 @@ export const Profile = () => {
         profile_image: data.profile_image,
       }));
     } catch (err) {
+      // Requirement 7: Improve error handling by logging full error, response body, and status code
+      console.error("Complete Axios/fetch error during image upload:", err);
+      if (err.response) {
+        console.error("Server response body:", err.response.data);
+        console.error("HTTP status code:", err.response.status);
+      } else {
+        console.error("No server response received (network/CORS/request setup error).");
+      }
       setError(getApiErrorMessage(err, 'Image upload failed.'));
     } finally {
       setUploading(false);

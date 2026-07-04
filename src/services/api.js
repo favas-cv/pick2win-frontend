@@ -16,11 +16,17 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Token ${token}`;
     }
-    if (config.data instanceof FormData) {
+    const isFormData = config.data && (
+      config.data instanceof FormData ||
+      Object.prototype.toString.call(config.data) === '[object FormData]'
+    );
+    if (isFormData && config.headers) {
       if (typeof config.headers.delete === 'function') {
         config.headers.delete('Content-Type');
+        config.headers.delete('content-type');
       } else {
         delete config.headers['Content-Type'];
+        delete config.headers['content-type'];
       }
     }
     return config;

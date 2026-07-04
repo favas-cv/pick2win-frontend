@@ -19,6 +19,7 @@ import AdminLogin from './pages/auth/AdminLogin';
 import Register from './pages/auth/Register';
 import OwnerRegister from './pages/auth/OwnerRegister';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Pages - User
 import UserHome from './pages/user/Home';
@@ -76,6 +77,8 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/register/owner" element={<OwnerRegister />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
             </Route>
 
             {/* User Mobile-First Dashboard Paths */}
