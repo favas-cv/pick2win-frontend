@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useClub } from '../../context/ClubContext';
 import { matchService } from '../../services/matchService';
 import { predictionService } from '../../services/predictionService';
-import StatCard from '../../components/common/StatCard';
 import MatchCard from '../../components/match/MatchCard';
 import PredictionModal from '../../components/match/PredictionModal';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { Activity, BarChart2, CalendarDays, ShieldAlert, Trophy, AlertCircle } from 'lucide-react';
+
+import { Activity, BarChart2, CalendarDays, History, ShieldAlert, Trophy, AlertCircle } from 'lucide-react';
 
 export const Home = () => {
   const { user } = useAuth();
-  const { activeClub, memberships, loadingClubs } = useClub();
+  const { activeClub, memberships } = useClub();
 
   const [matches, setMatches] = useState([]);
   const [predictions, setPredictions] = useState([]);
@@ -21,7 +21,7 @@ export const Home = () => {
 
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('open'); // 'open' | 'results'
+  const [activeTab, setActiveTab] = useState('open'); // 'open' | 'predictions' | 'results'
 
   // Determine membership status for the active club
   const activeMembership = memberships.find(m => m.clubId === activeClub?.id);
@@ -125,11 +125,45 @@ export const Home = () => {
   }
 
   // ── Approved / Active view ──────────────────────────────────────────────────
-  const upcomingMatches = matches.filter(m => m.status === 'Upcoming');
-  const completedMatches = matches.filter(m => m.status === 'Completed' || m.status === 'Live');
+  const predictionMatchIds = new Set(predictions.map(p => p.matchId));
+  const now = new Date();
+  const isMatchLockedOrStarted = (match) => {
+    const kickoff = match.kickoffTime ? new Date(match.kickoffTime) : null;
+    const lockTime = match.predictionLockTime ? new Date(match.predictionLockTime) : kickoff;
+    return (
+      match.status === 'Completed' ||
+      match.status === 'Live' ||
+      (lockTime && now >= lockTime) ||
+      (kickoff && now >= kickoff)
+    );
+  };
+  const upcomingMatches = matches.filter(
+    m => !predictionMatchIds.has(m.id) && m.status === 'Upcoming' && !isMatchLockedOrStarted(m)
+  );
+  const predictedMatches = predictions
+    .map((prediction) => {
+      const match = matches.find(m => m.id === prediction.matchId);
+      if (match) return { match, prediction };
+
+      const { matchInfo } = prediction;
+      return {
+        prediction,
+        match: {
+          id: prediction.matchId,
+          tournamentName: prediction.tournamentName,
+          teamA: matchInfo.teamA,
+          teamB: matchInfo.teamB,
+          kickoffTime: matchInfo.kickoffTime,
+          predictionLockTime: matchInfo.predictionLockTime || matchInfo.kickoffTime,
+          status: matchInfo.status,
+          scoreA: matchInfo.scoreA,
+          scoreB: matchInfo.scoreB,
+        },
+      };
+    });
+  const recentMatches = matches.filter(isMatchLockedOrStarted);
 
   const userTotalPredictions = predictions.length;
-  const userCorrectScores = predictions.filter(p => p.pointsEarned >= 3).length;
   const userTotalPoints = predictions.reduce((sum, p) => sum + (p.pointsEarned || 0), 0);
 
   return (
@@ -169,7 +203,7 @@ export const Home = () => {
       {/* Match sections */}
       <div className="space-y-5">
         <div className="bg-white border border-slate-200 rounded-3xl p-2 shadow-sm">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => setActiveTab('open')}
               className={`flex items-center justify-center gap-2 text-xs sm:text-sm font-black px-3 py-3 rounded-2xl transition-all ${
@@ -179,7 +213,18 @@ export const Home = () => {
               }`}
             >
               <CalendarDays className="w-4 h-4" />
-              Upcoming Matches
+              Upcoming
+            </button>
+            <button
+              onClick={() => setActiveTab('predictions')}
+              className={`flex items-center justify-center gap-2 text-xs sm:text-sm font-black px-3 py-3 rounded-2xl transition-all ${
+                activeTab === 'predictions'
+                  ? 'bg-black text-white shadow-md shadow-black/10'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              <History className="w-4 h-4" />
+              My Predictions
             </button>
             <button
               onClick={() => setActiveTab('results')}
@@ -190,7 +235,7 @@ export const Home = () => {
               }`}
             >
               <Activity className="w-4 h-4" />
-              Recent Matches
+              Recent
             </button>
           </div>
         </div>
@@ -210,13 +255,32 @@ export const Home = () => {
           ) : (
             <EmptyState
               title="No upcoming matches"
-              description="There are no active matches scheduled. Check back later for new sporting events."
+              description="There are no open matches available for prediction right now."
+            />
+          )
+        ) : activeTab === 'predictions' ? (
+          predictedMatches.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {predictedMatches.map(({ match, prediction }) => (
+                <MatchCard
+                  key={prediction.id}
+                  match={match}
+                  onPredict={handlePredictClick}
+                  userPrediction={prediction}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={History}
+              title="No predictions yet"
+              description="Your submitted predictions will appear here."
             />
           )
         ) : (
-          completedMatches.length > 0 ? (
+          recentMatches.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {completedMatches.map(match => (
+              {recentMatches.map(match => (
                 <MatchCard
                   key={match.id}
                   match={match}

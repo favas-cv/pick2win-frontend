@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, LogIn, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, LogIn, AlertCircle } from 'lucide-react';
 import PhoneInput from '../../components/common/PhoneInput';
 import { stripPhoneSpaces } from '../../utils/phone';
 import { getApiErrorMessage } from '../../utils/apiError';
@@ -12,8 +12,9 @@ export const AdminLogin = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onChange' });
+  const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' });
 
   const onSubmit = async (data) => {
     setError('');
@@ -26,11 +27,6 @@ export const AdminLogin = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickLogin = () => {
-    setValue('phone', '7306656998');
-    setValue('password', 'admin123');
   };
 
   return (
@@ -58,11 +54,19 @@ export const AdminLogin = () => {
               <Lock className="w-4 h-4" />
             </span>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               {...register('password', { required: 'Password is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sports-gray hover:text-slate-900"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
         </div>
@@ -81,15 +85,6 @@ export const AdminLogin = () => {
           )}
         </button>
       </form>
-
-      <div className="border-t border-slate-200 pt-4">
-        <button
-          onClick={handleQuickLogin}
-          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition border border-slate-200"
-        >
-          Use Mock Admin Account
-        </button>
-      </div>
 
       <div className="text-center text-xs">
         <Link to="/" className="text-black hover:underline font-bold">Back to Landing Page</Link>

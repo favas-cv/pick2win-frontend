@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Lock, Key, Home, Compass, MapPin, AlignLeft, UserPlus, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, User, Lock, Key, Home, Compass, MapPin, AlignLeft, UserPlus, AlertCircle } from 'lucide-react';
 import PhoneInput from '../../components/common/PhoneInput';
 import { stripPhoneSpaces } from '../../utils/phone';
 
@@ -11,6 +11,8 @@ export const OwnerRegister = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' });
 
@@ -43,8 +45,8 @@ export const OwnerRegister = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-xl font-bold text-slate-900">Owner Registration</h2>
-        <p className="text-xs text-sports-gray mt-1 font-semibold">Register to start managing your own club and predicting leagues.</p>
+        <h2 className="text-xl font-bold text-slate-900">Club Register</h2>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Register to start managing your club and predicting leagues.</p>
       </div>
 
       {error && (
@@ -82,14 +84,22 @@ export const OwnerRegister = () => {
               <Lock className="w-4 h-4" />
             </span>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="8 character password"
               {...register('password', { 
                 required: 'Password is required', 
                 minLength: { value: 8, message: 'Password must be at least 8 characters' }
               })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sports-gray hover:text-slate-900"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
         </div>
@@ -102,11 +112,19 @@ export const OwnerRegister = () => {
               <Lock className="w-4 h-4" />
             </span>
             <input
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Repeat 8 character password"
               {...register('password2', { required: 'Please confirm password' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sports-gray hover:text-slate-900"
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           {errors.password2 && <span className="text-[10px] text-red-500 block mt-1">{errors.password2.message}</span>}
         </div>
@@ -120,7 +138,7 @@ export const OwnerRegister = () => {
             </span>
             <input
               type="text"
-              placeholder="Brazil Fans Club"
+              placeholder="CHASE ARTS AND SPORTS CLUB"
               {...register('club_name', { required: 'Club name is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
@@ -137,7 +155,7 @@ export const OwnerRegister = () => {
             </span>
             <input
               type="text"
-              placeholder="brazil-fans"
+              placeholder="chase-skbad"
               {...register('slug', { required: 'Slug is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
@@ -154,7 +172,7 @@ export const OwnerRegister = () => {
             </span>
             <input
               type="text"
-              placeholder="Rio de Janeiro"
+              placeholder="Sideeqabad"
               {...register('place', { required: 'Place/Location is required' })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
@@ -191,13 +209,13 @@ export const OwnerRegister = () => {
           disabled={loading}
           className="w-full bg-black hover:bg-zinc-800 disabled:opacity-50 text-white text-sm font-black py-3 rounded-xl transition shadow-lg shadow-black/10 flex items-center justify-center gap-1.5 active:scale-98"
         >
-          <UserPlus className="w-4 h-4" /> Request Club Ownership
+          <UserPlus className="w-4 h-4" /> Register Club
         </button>
       </form>
 
       <p className="text-xs text-sports-gray text-center font-semibold">
-        Already have an owner account?{' '}
-        <Link to="/login/owner" className="text-black hover:underline font-bold">Sign in here</Link>
+        Already have a club account?{' '}
+        <Link to="/login/owner" className="text-black hover:underline font-bold">Club login</Link>
       </p>
     </div>
   );

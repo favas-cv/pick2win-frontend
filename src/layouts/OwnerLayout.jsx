@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Outlet, Navigate, NavLink } from 'react-router-dom';
+import { Outlet, Navigate, NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useClub } from '../context/ClubContext';
 import { 
   LayoutDashboard, Users, Link2, Trophy, Award, History, 
-  Menu, X, LogOut, ChevronLeft, ChevronRight, Club, ShieldAlert 
+  Menu, X, LogOut, ChevronLeft, ChevronRight, Club, ShieldAlert, KeyRound, Home
 } from 'lucide-react';
 
 export const OwnerLayout = () => {
@@ -59,8 +59,10 @@ export const OwnerLayout = () => {
   }
 
   const menuItems = [
+    { path: '/user/home', label: 'User Home', icon: Home },
     { path: '/owner/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/owner/members', label: 'Members Directory', icon: Users },
+    { path: '/owner/reset-requests', label: 'Password Requests', icon: KeyRound },
     { path: '/owner/invite', label: 'Invite Settings', icon: Link2 },
     { path: '/owner/tournaments', label: 'Tournament Selection', icon: Trophy },
     { path: '/owner/leaderboard', label: 'Leaderboard Board', icon: Award },
@@ -77,12 +79,22 @@ export const OwnerLayout = () => {
             {activeClub?.name || 'Club Owner'}
           </span>
         </div>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1 text-slate-400 hover:text-slate-800"
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/user/home"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm"
+            title="Go to user home"
+            aria-label="Go to user home"
+          >
+            <Home className="h-4 w-4" />
+          </Link>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1 text-slate-400 hover:text-slate-800"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </header>
 
       {/* Mobile drawer */}

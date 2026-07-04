@@ -1,18 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
 import { predictionService } from '../../services/predictionService';
+import { matchService } from '../../services/matchService';
 import PredictionCard from '../../components/match/PredictionCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { Shield, Phone, Award, Calendar, LogOut, History } from 'lucide-react';
+import { Phone, Award, Calendar, LogOut, History, Camera, Edit3, Save, X, Star, AlertCircle } from 'lucide-react';
+import { getApiErrorMessage } from '../../utils/apiError';
 
 export const Profile = () => {
   const { user, logout } = useAuth();
+  const logoSrc = '/favicon.png';
   const [profile, setProfile] = useState(null);
   const [predictions, setPredictions] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [predictionPage, setPredictionPage] = useState(1);
+  const fileInputRef = useRef(null);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const predictionsPerPage = 5;
 
   useEffect(() => {
     const fetchProfileAndHistory = async () => {
@@ -23,16 +36,24 @@ export const Profile = () => {
           predictionService.getUserPredictionsHistory()
         ]);
         setProfile(profileData);
+        reset({
+          name: profileData.name || '',
+          bio: profileData.bio || '',
+          favorite_team: profileData.favorite_team?.id || '',
+        });
         setPredictions(historyData);
+        setPredictionPage(1);
+        matchService.getTeams().then(setTeams).catch(() => setTeams([]));
       } catch (err) {
         console.error(err);
+        setError(getApiErrorMessage(err, 'Failed to load profile.'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfileAndHistory();
-  }, []);
+  }, [reset]);
 
   if (loading) {
     return (
@@ -48,6 +69,67 @@ export const Profile = () => {
   }
 
   const { club } = profile;
+  const profileImage = profile.profile_image || user?.profile_image || 'https://api.dicebear.com/7.x/pixel-art/svg';
+  const favoriteTeamLogo = profile.favorite_team?.logo;
+  const predictionPageCount = Math.max(1, Math.ceil(predictions.length / predictionsPerPage));
+  const safePredictionPage = Math.min(predictionPage, predictionPageCount);
+  const paginatedPredictions = predictions.slice(
+    (safePredictionPage - 1) * predictionsPerPage,
+    safePredictionPage * predictionsPerPage
+  );
+
+  const onEdit = () => {
+    reset({
+      name: profile.name || '',
+      bio: profile.bio || '',
+      favorite_team: profile.favorite_team?.id || '',
+    });
+    setError('');
+    setEditing(true);
+  };
+
+  const onSave = async (data) => {
+    setSaving(true);
+    setError('');
+    try {
+      const payload = {
+        name: data.name,
+        bio: data.bio || '',
+        favorite_team: data.favorite_team ? Number(data.favorite_team) : null,
+      };
+      const updatedProfile = await authService.updateProfile(payload);
+      setProfile(updatedProfile);
+      reset({
+        name: updatedProfile.name || '',
+        bio: updatedProfile.bio || '',
+        favorite_team: updatedProfile.favorite_team?.id || '',
+      });
+      setEditing(false);
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Profile update failed.'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const onUploadImage = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const data = await authService.uploadProfileImage(file);
+      setProfile((current) => ({
+        ...current,
+        profile_image: data.profile_image,
+      }));
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Image upload failed.'));
+    } finally {
+      setUploading(false);
+      event.target.value = '';
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
@@ -56,23 +138,118 @@ export const Profile = () => {
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#fffdf2]0/10 via-black/30 to-amber-400/20"></div>
         <div className="absolute top-0 right-0 w-40 h-40 bg-[#fffdf2]/80 rounded-full translate-x-16 -translate-y-16"></div>
         <div className="absolute bottom-0 right-10 w-24 h-24 bg-amber-50/80 rounded-full translate-y-12"></div>
+
+        {error && (
+          <div className="relative mb-4 rounded-xl border border-red-200 bg-red-50/80 p-3 text-xs font-semibold text-red-600 flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
         
         <div className="relative flex flex-col sm:flex-row items-center gap-6">
-          <div className="p-1.5 rounded-3xl bg-gradient-to-br from-blue-100 via-white to-amber-100 shadow-sm shrink-0">
-            <div className="w-24 h-24 rounded-2xl border border-white bg-slate-50 flex items-center justify-center text-4xl shadow-inner">
-              👤
-            </div>
+          <div className="relative p-1.5 rounded-3xl bg-gradient-to-br from-blue-100 via-white to-amber-100 shadow-sm shrink-0">
+            <img
+              src={profileImage}
+              alt={profile.name}
+              className="w-24 h-24 rounded-2xl border border-white bg-slate-50 object-cover shadow-inner"
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={onUploadImage}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="absolute -bottom-2 -right-2 flex h-9 w-9 items-center justify-center rounded-full bg-black text-white shadow-lg shadow-black/20 disabled:opacity-60"
+              title="Upload profile image"
+            >
+              <Camera className="h-4 w-4" />
+            </button>
           </div>
           <div className="text-center sm:text-left space-y-4 flex-1 min-w-0">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 leading-tight capitalize tracking-tight">{profile.name}</h2>
-            </div>
-            
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 text-slate-500 text-xs font-semibold">
-              <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
-                <Phone className="w-3.5 h-3.5 text-black" /> {profile.phone}
-              </span>
-            </div>
+            {editing ? (
+              <form onSubmit={handleSubmit(onSave)} className="space-y-3">
+                <div>
+                  <input
+                    type="text"
+                    {...register('name', { required: 'Name is required' })}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900 outline-none focus:border-black"
+                  />
+                  {errors.name && <span className="mt-1 block text-[10px] text-red-500">{errors.name.message}</span>}
+                </div>
+                <textarea
+                  rows={3}
+                  placeholder="Short bio"
+                  {...register('bio')}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-black"
+                />
+                <select
+                  {...register('favorite_team')}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none focus:border-black"
+                >
+                  <option value="">No favorite team</option>
+                  {teams.map((team) => (
+                    <option key={team.id} value={team.id}>{team.name}</option>
+                  ))}
+                </select>
+                <div className="flex justify-center sm:justify-start gap-2">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-black px-4 py-2 text-xs font-bold text-white disabled:opacity-60"
+                  >
+                    <Save className="h-4 w-4" /> {saving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditing(false)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700"
+                  >
+                    <X className="h-4 w-4" /> Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <>
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div>
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-950 leading-tight capitalize tracking-tight">{profile.name}</h2>
+                    {profile.bio && <p className="mt-2 text-sm font-medium leading-relaxed text-slate-600">{profile.bio}</p>}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onEdit}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm"
+                  >
+                    <Edit3 className="h-4 w-4" /> Edit
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 text-slate-500 text-xs font-semibold">
+                  <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
+                    <Phone className="w-3.5 h-3.5 text-black" /> {profile.phone}
+                  </span>
+                  {profile.favorite_team && (
+                    <span className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
+                      {favoriteTeamLogo ? (
+                        <img
+                          src={favoriteTeamLogo}
+                          alt={profile.favorite_team.name}
+                          className="h-4 w-4 rounded-full object-cover"
+                        />
+                      ) : (
+                        <Star className="w-3.5 h-3.5 text-black" />
+                      )}
+                      {profile.favorite_team.name}
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
 
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               {profile.role === 'club_admin' && (
@@ -95,8 +272,12 @@ export const Profile = () => {
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 bg-gradient-to-br from-[#fffdf2] to-white border border-black/10 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
-                ⚽
+              <div className="w-14 h-14 bg-white border border-black/10 rounded-2xl flex items-center justify-center shadow-sm shrink-0">
+                <img
+                  src={logoSrc}
+                  alt="Club logo"
+                  className="h-10 w-10 object-contain"
+                />
               </div>
               <div>
                 <h4 className="text-lg font-black text-slate-950 capitalize leading-tight">{club.name}</h4>
@@ -124,11 +305,36 @@ export const Profile = () => {
         </div>
         
         {predictions.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
-            {predictions.map((pred) => (
-              <PredictionCard key={pred.id} prediction={pred} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-4">
+              {paginatedPredictions.map((pred) => (
+                <PredictionCard key={pred.id} prediction={pred} />
+              ))}
+            </div>
+            {predictionPageCount > 1 && (
+              <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setPredictionPage((page) => Math.max(1, page - 1))}
+                  disabled={safePredictionPage === 1}
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Previous
+                </button>
+                <span className="text-xs font-black text-slate-500">
+                  Page {safePredictionPage} of {predictionPageCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPredictionPage((page) => Math.min(predictionPageCount, page + 1))}
+                  disabled={safePredictionPage === predictionPageCount}
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <EmptyState 
             icon={History}

@@ -34,6 +34,7 @@ import OwnerInviteLink from './pages/owner/InviteLink';
 import OwnerTournamentSelection from './pages/owner/TournamentSelection';
 import OwnerLeaderboard from './pages/owner/Leaderboard';
 import OwnerHistory from './pages/owner/History';
+import OwnerResetRequests from './pages/owner/ResetRequests';
 
 // Pages - Admin
 import AdminDashboard from './pages/admin/Dashboard';
@@ -90,6 +91,7 @@ function App() {
             <Route path="/owner" element={<OwnerLayout />}>
               <Route path="dashboard" element={<OwnerDashboard />} />
               <Route path="members" element={<OwnerMembers />} />
+              <Route path="reset-requests" element={<OwnerResetRequests />} />
               <Route path="invite" element={<OwnerInviteLink />} />
               <Route path="tournaments" element={<OwnerTournamentSelection />} />
               <Route path="leaderboard" element={<OwnerLeaderboard />} />

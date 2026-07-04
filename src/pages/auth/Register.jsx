@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, User, Lock, Key, UserPlus, AlertCircle } from 'lucide-react';
 import PhoneInput from '../../components/common/PhoneInput';
 import { stripPhoneSpaces } from '../../utils/phone';
 import { getApiErrorMessage } from '../../utils/apiError';
@@ -13,6 +13,8 @@ export const Register = () => {
   const [searchParams] = useSearchParams();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({ mode: 'onChange' });
 
@@ -45,7 +47,7 @@ export const Register = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl font-bold text-slate-900">User Registration</h2>
-        <p className="text-xs text-sports-gray mt-1 font-semibold">Join PRED-iT and start predicting match scores.</p>
+        <p className="text-xs text-sports-gray mt-1 font-semibold">Join Pick2Win and start predicting match scores.</p>
       </div>
 
       {error && (
@@ -83,14 +85,22 @@ export const Register = () => {
               <Lock className="w-4 h-4" />
             </span>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="8 character simple password"
               {...register('password1', { 
                 required: 'Password is required', 
                 minLength: { value: 8, message: 'Password must be at least 8 characters' }
               })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sports-gray hover:text-slate-900"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           {errors.password1 && <span className="text-[10px] text-red-500 block mt-1">{errors.password1.message}</span>}
         </div>
@@ -103,14 +113,22 @@ export const Register = () => {
               <Lock className="w-4 h-4" />
             </span>
             <input
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Repeat the 8 character password"
               {...register('password2', { 
                 required: 'Please confirm password',
                 validate: (value) => value === watch('password1') || 'Passwords do not match'
               })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sports-gray hover:text-slate-900"
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           {errors.password2 && <span className="text-[10px] text-red-500 block mt-1">{errors.password2.message}</span>}
         </div>
@@ -155,8 +173,8 @@ export const Register = () => {
           <Link to="/login/user" className="text-black hover:underline font-bold">Sign in here</Link>
         </p>
         <p className="text-sports-gray">
-          Are you a club owner?{' '}
-          <Link to="/register/owner" className="text-black hover:underline font-bold">Owner registration</Link>
+          Are you a club?{' '}
+          <Link to="/register/owner" className="text-black hover:underline font-bold">Club register</Link>
         </p>
       </div>
     </div>

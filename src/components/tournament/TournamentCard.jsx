@@ -1,15 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import wcLogo from '../../assets/wclogo.jpeg';
 
 export const TournamentCard = ({ tournament, showAction = true, actionButton }) => {
-  const { id, name, logo, sportType, matchCount } = tournament;
+  const { id, name, sportType, matchCount } = tournament;
 
   return (
     <div className="glass-card border-slate-200 rounded-2xl p-5 hover:border-slate-300 transition duration-300 flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-2xl shadow-inner shrink-0">
-          {logo}
+        <div className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-inner shrink-0 p-1">
+          <img
+            src={wcLogo}
+            alt={`${name} logo`}
+            className="h-full w-full object-contain"
+          />
         </div>
         <div>
           <h4 className="text-sm font-bold text-slate-900 leading-snug">{name}</h4>

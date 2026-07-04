@@ -132,11 +132,11 @@ export const predictionService = {
 
       return board.map((item, index) => ({
         rank: index + 1,
-        userId: item.user,
-        name: item.username || `Predictor ${item.user}`,
+        userId: item.user?.id ?? item.user,
+        name: item.name || item.username || item.user?.name || `Predictor ${item.user?.id ?? item.user}`,
         points: item.total_points,
         accuracy: 100, // Default display value
-        logo: '👤',
+        avatar: item.profile_image || item.user?.profile_image || item.avatar || item.image || null,
       }));
     } catch (err) {
       console.error('Leaderboard fetch failed:', err);

@@ -72,6 +72,9 @@ export const HowToPlayButton = () => {
                 <div className="mt-3 space-y-1.5 text-[11px] font-medium leading-relaxed text-slate-500">
                   <p><span className="font-black text-slate-700">Exact score:</span> predict the full score correctly.</p>
                   <p><span className="font-black text-slate-700">Correct result:</span> predict win, draw, or loss correctly.</p>
+                  <p><span className="font-black text-slate-700">Shootout rule:</span> if a match goes to penalties, the shootout score will apply.</p>
+                  <p><span className="font-black text-slate-700">Leaderboard ties:</span> if players finish with the same points, club members can compare who made more correct predictions.</p>
+                  <p><span className="font-black text-slate-700">Prizes:</span> winners can claim exciting prizes. Terms and conditions apply.</p>
                   <p><span className="font-black text-slate-700">Wrong pick:</span> no points.</p>
                 </div>
               </div>

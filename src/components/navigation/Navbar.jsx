@@ -1,11 +1,12 @@
 import { NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ClubSelector from '../club/ClubSelector';
+import pick2winLogo from '../../assets/pick2winlogo.jpeg';
 import { Trophy, LayoutDashboard, Home, Award, User } from 'lucide-react';
 
 export const Navbar = () => {
   const { user } = useAuth();
-  const logoPlaceholder = 'https://placehold.co/40x40/2563eb/ffffff?text=P';
+  const logoSrc = '/favicon.png';
 
   const getNavLinks = () => {
     if (user?.role === 'user' || user?.role === 'club_admin') {
@@ -24,18 +25,14 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-slate-200 z-40 h-16">
       <div className="max-w-7xl mx-auto h-full px-4 flex items-center justify-between">
-        {/* Left Side: PRED-iT Logo & Club Selector */}
+        {/* Left Side: Pick2Win Logo & Club Selector */}
         <div className="flex items-center gap-3 md:gap-4 min-w-0">
           <Link to="/" className="flex items-center gap-2 font-bold text-lg text-slate-900 shrink-0">
             <img
-              src={logoPlaceholder}
-              alt="PRED-iT"
-              className="md:hidden w-9 h-9 rounded-xl border border-black/10 shadow-sm"
+              src={pick2winLogo}
+              alt="Pick2Win"
+              className="h-10 w-auto max-w-[132px] rounded-xl border border-black/10 bg-white object-contain shadow-sm"
             />
-            <Trophy className="hidden md:block w-5 h-5 text-black fill-black/10" />
-            <span className="hidden md:inline font-black tracking-tight">
-              PRED<span className="text-black">-iT</span>
-            </span>
           </Link>
 
           {user && (user.role === 'user' || user.role === 'club_owner' || user.role === 'club_admin') && (
@@ -99,6 +96,11 @@ export const Navbar = () => {
               Sign In
             </Link>
           )}
+          <img
+            src={logoSrc}
+            alt="Pick2Win logo"
+            className="h-9 w-9 rounded-xl border border-slate-200 bg-white object-contain p-1 shadow-sm"
+          />
         </div>
       </div>
     </nav>

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { adminService } from '../../services/adminService';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { Calendar, Plus, Save, Lock, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Calendar, Plus, Save, Lock, Clock, AlertCircle, Pencil, Trash2 } from 'lucide-react';
 
 const statusStyle = (status) => {
   switch (status) {
@@ -24,8 +24,17 @@ export const Matches = () => {
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [editingMatch, setEditingMatch] = useState(null);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  const toDateTimeLocalValue = (value) => {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return offsetDate.toISOString().slice(0, 16);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -48,13 +57,15 @@ export const Matches = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    const timeoutId = window.setTimeout(fetchData, 0);
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const onSubmit = async (data) => {
     setSubmitting(true);
+    setError('');
     try {
-      const newMatch = await adminService.createMatch({
+      const payload = {
         tournamentId: parseInt(data.tournamentId),
         homeTeamId: parseInt(data.homeTeamId),
         awayTeamId: parseInt(data.awayTeamId),
@@ -62,15 +73,68 @@ export const Matches = () => {
         predictionLockTime: data.predictionLockTime
           ? new Date(data.predictionLockTime).toISOString()
           : new Date(data.kickoff).toISOString(),
-      });
-      setMatches((prev) => [newMatch, ...prev]);
+      };
+      if (editingMatch) {
+        const updatedMatch = await adminService.updateMatch(editingMatch.id, payload);
+        setMatches((prev) => prev.map((match) => (match.id === updatedMatch.id ? updatedMatch : match)));
+      } else {
+        const newMatch = await adminService.createMatch(payload);
+        setMatches((prev) => [newMatch, ...prev]);
+      }
       setShowForm(false);
+      setEditingMatch(null);
       reset();
     } catch (err) {
       console.error(err);
-      setError('Failed to schedule match. Please check your inputs.');
+      setError(
+        editingMatch
+          ? 'Failed to update match. Please check your inputs.'
+          : 'Failed to schedule match. Please check your inputs.'
+      );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const startCreate = () => {
+    setEditingMatch(null);
+    setShowForm((prev) => !prev);
+    setError('');
+    reset();
+  };
+
+  const startEdit = (match) => {
+    setEditingMatch(match);
+    setShowForm(true);
+    setError('');
+    reset({
+      tournamentId: match.tournament?.id ?? '',
+      homeTeamId: match.homeTeam?.id ?? '',
+      awayTeamId: match.awayTeam?.id ?? '',
+      kickoff: toDateTimeLocalValue(match.kickoff),
+      predictionLockTime: toDateTimeLocalValue(match.predictionLockTime),
+    });
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingMatch(null);
+    reset();
+  };
+
+  const handleDelete = async (match) => {
+    const label = `${match.homeTeam?.name ?? 'Home team'} vs ${match.awayTeam?.name ?? 'Away team'}`;
+    if (!window.confirm(`Delete ${label}?`)) return;
+    setError('');
+    try {
+      await adminService.deleteMatch(match.id);
+      setMatches((prev) => prev.filter((item) => item.id !== match.id));
+      if (editingMatch?.id === match.id) {
+        closeForm();
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to delete match.');
     }
   };
 
@@ -96,7 +160,7 @@ export const Matches = () => {
           </p>
         </div>
         <button
-          onClick={() => { setShowForm(!showForm); setError(''); }}
+          onClick={startCreate}
           className="bg-sports-green hover:bg-sports-greenDark text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1 active:scale-95 shrink-0"
         >
           <Plus className="w-4 h-4" /> {showForm ? 'Cancel' : 'Schedule Match'}
@@ -114,7 +178,7 @@ export const Matches = () => {
       {showForm && (
         <div className="glass-card border-slate-200 rounded-2xl p-6 animate-fadeIn">
           <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
-            Schedule New Matchup
+            {editingMatch ? 'Edit Matchup' : 'Schedule New Matchup'}
           </h3>
           <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Tournament */}
@@ -211,7 +275,7 @@ export const Matches = () => {
             <div className="md:col-span-2 pt-2 border-t border-slate-200 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={closeForm}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-xl transition"
               >
                 Cancel
@@ -222,7 +286,7 @@ export const Matches = () => {
                 className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-lg shadow-sports-green/10 active:scale-95"
               >
                 <Save className="w-4 h-4" />
-                {submitting ? 'Saving…' : 'Save Match'}
+                {submitting ? 'Saving…' : editingMatch ? 'Update Match' : 'Save Match'}
               </button>
             </div>
           </form>
@@ -277,7 +341,7 @@ export const Matches = () => {
                 </div>
               </div>
 
-              {/* Right: score + status */}
+              {/* Right: score + status + actions */}
               <div className="flex items-center gap-3 shrink-0">
                 {match.isFinished && match.homeScore !== null && (
                   <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center">
@@ -292,6 +356,22 @@ export const Matches = () => {
                 >
                   {match.status}
                 </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => startEdit(match)}
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 transition active:scale-95"
+                    title="Edit Match"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(match)}
+                    className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 transition active:scale-95"
+                    title="Delete Match"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

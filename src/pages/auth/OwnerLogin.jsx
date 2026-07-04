@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, LogIn, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, LogIn, AlertCircle } from 'lucide-react';
 import PhoneInput from '../../components/common/PhoneInput';
 import { stripPhoneSpaces } from '../../utils/phone';
 import { getApiErrorMessage } from '../../utils/apiError';
@@ -12,6 +12,7 @@ export const OwnerLogin = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' });
 
@@ -22,7 +23,7 @@ export const OwnerLogin = () => {
       await login(stripPhoneSpaces(data.phone), data.password, 'club_owner');
       navigate('/owner/dashboard');
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Invalid owner credentials.'));
+      setError(getApiErrorMessage(err, 'Invalid club credentials.'));
     } finally {
       setLoading(false);
     }
@@ -31,7 +32,7 @@ export const OwnerLogin = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-xl font-bold text-slate-900">Owner Login</h2>
+        <h2 className="text-xl font-bold text-slate-900">Club Login</h2>
         <p className="text-xs text-sports-gray mt-1 font-semibold">Sign in to manage members, active tournaments and invites.</p>
       </div>
 
@@ -56,11 +57,19 @@ export const OwnerLogin = () => {
               <Lock className="w-4 h-4" />
             </span>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               {...register('password', { required: 'Password is required' })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 focus:border-black focus:outline-none transition"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sports-gray hover:text-slate-900"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           {errors.password && <span className="text-[10px] text-red-500 block mt-1">{errors.password.message}</span>}
         </div>
@@ -87,7 +96,7 @@ export const OwnerLogin = () => {
         </p>
         <p className="text-sports-gray">
           Want to open a club?{' '}
-          <Link to="/register/owner" className="text-black hover:underline font-bold">Register as Owner</Link>
+          <Link to="/register/owner" className="text-black hover:underline font-bold">Club Register</Link>
         </p>
       </div>
     </div>

@@ -10,6 +10,7 @@ import PredictionModal from '../../components/match/PredictionModal';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
 import { ChevronLeft, Calendar, AlignLeft, ShieldAlert } from 'lucide-react';
+import wcLogo from '../../assets/wclogo.jpeg';
 
 export const TournamentDetails = () => {
   const { id } = useParams();
@@ -116,8 +117,12 @@ export const TournamentDetails = () => {
       </div>
 
       <div className="glass-card rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row gap-6">
-        <div className="w-16 h-16 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-3xl shadow-inner shrink-0">
-          {tournament.logo}
+        <div className="w-16 h-16 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shadow-inner shrink-0 p-1.5">
+          <img
+            src={wcLogo}
+            alt={`${tournament.name} logo`}
+            className="h-full w-full object-contain"
+          />
         </div>
         <div className="space-y-2 flex-1">
           <div className="flex flex-wrap items-center gap-2">

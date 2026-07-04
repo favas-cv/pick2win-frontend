@@ -58,7 +58,7 @@ export const Leaderboard = () => {
     rank: '-',
     points: 0,
     name: user?.name,
-    avatar: user?.avatar,
+    avatar: user?.profile_image || user?.avatar,
   };
   const selectedTournamentName = tournaments.find(t => t.id === selectedTournament)?.name || 'Tournament';
   const topThree = [2, 1, 3]
@@ -80,7 +80,7 @@ export const Leaderboard = () => {
             rank={currentUserStandings.rank} 
             points={currentUserStandings.points} 
             name={currentUserStandings.name || user?.name}
-            avatar={currentUserStandings.avatar || user?.avatar}
+            avatar={currentUserStandings.avatar || user?.profile_image || user?.avatar}
           />
 
           {topThree.length > 0 && (

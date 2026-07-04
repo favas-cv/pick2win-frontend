@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'https://pick2win-chase-skbad.up.railway.app/api').replace(/\/+$/, '');
+const API_URL = (import.meta.env.VITE_API_URL); //|| 'https://pick2win-api.duckdns.org/api').replace(/\/+$/, '');
 console.log("API URL:", API_URL);
 const api = axios.create({
   baseURL: API_URL,
@@ -15,6 +15,13 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Token ${token}`;
+    }
+    if (config.data instanceof FormData) {
+      if (typeof config.headers.delete === 'function') {
+        config.headers.delete('Content-Type');
+      } else {
+        delete config.headers['Content-Type'];
+      }
     }
     return config;
   },

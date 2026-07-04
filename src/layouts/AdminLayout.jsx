@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, Users, Shield, Flag, Trophy, Calendar, 
   CheckSquare, Award, BarChart2, Menu, X, LogOut, ChevronLeft, 
-  ChevronRight, ShieldAlert 
+  ChevronRight, ShieldAlert
 } from 'lucide-react';
 
 export const AdminLayout = () => {
@@ -52,7 +52,7 @@ export const AdminLayout = () => {
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-5 h-5 text-black" />
           <span className="font-extrabold text-sm tracking-wide text-slate-900">
-            PRED-iT Admin
+            Pick2Win Admin
           </span>
         </div>
         <button
@@ -112,7 +112,7 @@ export const AdminLayout = () => {
           <ShieldAlert className="w-6 h-6 text-black shrink-0" />
           {!sidebarCollapsed && (
             <div className="truncate">
-              <h2 className="font-extrabold text-sm text-slate-900 tracking-wide">PRED-iT Admin</h2>
+              <h2 className="font-extrabold text-sm text-slate-900 tracking-wide">Pick2Win Admin</h2>
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">System Governance</p>
             </div>
           )}

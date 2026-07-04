@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useClub } from '../../context/ClubContext';
 import { clubService } from '../../services/clubService';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { Users, Check, X, ShieldAlert, Ban, UserCheck, Trash2 } from 'lucide-react';
+import { Users, Check, X } from 'lucide-react';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export const Members = () => {
@@ -21,8 +21,8 @@ export const Members = () => {
       if (!activeClub) return;
       setLoading(true);
       try {
-        const members = await clubService.getClubMembers(activeClub.id);
-        setClubMembers(members);
+        const data = await clubService.getClubMembers(activeClub.id);
+        setClubMembers(Array.isArray(data) ? data : data.members || []);
       } catch (err) {
         console.error('Failed to fetch members:', err);
       } finally {
@@ -64,6 +64,16 @@ export const Members = () => {
       day: 'numeric',
       year: 'numeric'
     });
+  };
+
+  const getMemberName = (member) => member.user_name || member.name || 'Unknown Member';
+  const getMemberPhone = (member) => member.phone || member.email || 'No phone number';
+  const getMemberJoinedAt = (member) => member.joined_at || member.joinedDate;
+  const getMemberAvatar = (member) =>
+    member.profile_image || member.avatar || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(getMemberName(member))}`;
+  const formatRole = (role) => {
+    if (!role) return 'Member';
+    return role.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
   };
 
   return (
@@ -111,17 +121,21 @@ export const Members = () => {
 
       {/* Roster list */}
       <div className="space-y-4">
+        {loading ? (
+          <LoadingSkeleton count={4} />
+        ) : (
+          <>
         {activeTab === 'pending' && (
           pendingRequests.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {pendingRequests.map((member) => (
                 <div key={member.id} className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm animate-fadeIn">
                   <div className="flex items-center gap-3">
-                    <img src={member.avatar} alt={member.name} className="w-11 h-11 rounded-full border border-slate-200" />
+                    <img src={getMemberAvatar(member)} alt={getMemberName(member)} className="w-11 h-11 rounded-full border border-slate-200" />
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">{member.name}</h4>
-                      <span className="text-[10px] text-slate-400 block font-semibold">{member.email}</span>
-                      <span className="text-[9px] text-slate-400 block mt-0.5">Requested: {formatJoined(member.joinedDate)}</span>
+                      <h4 className="text-sm font-bold text-slate-900">{getMemberName(member)}</h4>
+                      <span className="text-[10px] text-slate-400 block font-semibold">{getMemberPhone(member)}</span>
+                      <span className="text-[9px] text-slate-400 block mt-0.5">Requested: {formatJoined(getMemberJoinedAt(member))}</span>
                     </div>
                   </div>
                   <div className="flex gap-2 shrink-0">
@@ -154,21 +168,21 @@ export const Members = () => {
               {approvedMembers.map((member) => (
                 <div key={member.id} className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm animate-fadeIn">
                   <div className="flex items-center gap-3">
-                    <img src={member.avatar} alt={member.name} className="w-11 h-11 rounded-full border border-slate-200" />
+                    <img src={getMemberAvatar(member)} alt={getMemberName(member)} className="w-11 h-11 rounded-full border border-slate-200" />
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">{member.name}</h4>
-                      <span className="text-[10px] text-slate-400 block font-semibold">{member.email}</span>
+                      <h4 className="text-sm font-bold text-slate-900">{getMemberName(member)}</h4>
+                      <span className="text-[10px] text-slate-400 block font-semibold">{getMemberPhone(member)}</span>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-[9px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded font-bold text-slate-600">
-                          {member.predictions} Preds
+                          {formatRole(member.role)}
                         </span>
                         <span className="text-[9px] bg-[#fffdf2] border border-black/10 px-2 py-0.5 rounded font-bold text-black">
-                          {member.points} Points
+                          Joined {formatJoined(getMemberJoinedAt(member))}
                         </span>
                       </div>
                     </div>
                   </div>
-                  {member.id !== 'm-john' && ( // Prevent self-suspension of main demo account
+                  {member.role !== 'club_admin' && (
                     <button
                       onClick={() => openActionModal(member, 'suspend')}
                       className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-3 py-2 border border-red-200 rounded-xl text-[10px] font-extrabold uppercase tracking-wide transition shrink-0"
@@ -190,10 +204,10 @@ export const Members = () => {
               {suspendedMembers.map((member) => (
                 <div key={member.id} className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm animate-fadeIn">
                   <div className="flex items-center gap-3">
-                    <img src={member.avatar} alt={member.name} className="w-11 h-11 rounded-full border border-slate-200" />
+                    <img src={getMemberAvatar(member)} alt={getMemberName(member)} className="w-11 h-11 rounded-full border border-slate-200" />
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">{member.name}</h4>
-                      <span className="text-[10px] text-slate-400 block font-semibold">{member.email}</span>
+                      <h4 className="text-sm font-bold text-slate-900">{getMemberName(member)}</h4>
+                      <span className="text-[10px] text-slate-400 block font-semibold">{getMemberPhone(member)}</span>
                       <span className={`text-[8px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded border inline-block mt-1 ${
                         member.status === 'Suspended' ? 'text-red-500 bg-red-50 border-red-100' : 'text-slate-400 bg-slate-50 border-slate-200'
                       }`}>
@@ -214,6 +228,8 @@ export const Members = () => {
             <EmptyState icon={Users} title="No Suspended Accounts" description="You have not suspended or rejected any user request logs." />
           )
         )}
+          </>
+        )}
       </div>
 
       {/* Confirmation Modal */}
@@ -225,7 +241,7 @@ export const Members = () => {
             actionType === 'reject' ? 'Reject Membership Request?' :
             actionType === 'suspend' ? 'Suspend Member?' : 'Re-Activate Member?'
           }
-          message={`Are you sure you want to ${actionType} the club membership for ${selectedMember.name}?`}
+          message={`Are you sure you want to ${actionType} the club membership for ${getMemberName(selectedMember)}?`}
           confirmLabel={actionType.toUpperCase()}
           isDanger={actionType === 'reject' || actionType === 'suspend'}
           onConfirm={handleConfirmAction}

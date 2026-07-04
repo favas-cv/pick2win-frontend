@@ -97,9 +97,10 @@ const normalizeUser = (u, idx) => ({
  */
 const normalizeLeaderboardEntry = (item, idx) => ({
   rank: idx + 1,
-  userId: item.user,
-  name: item.username || `Predictor #${item.user}`,
+  userId: item.user?.id ?? item.user,
+  name: item.name || item.username || item.user?.name || `Predictor #${item.user?.id ?? item.user}`,
   points: item.total_points || 0,
+  avatar: item.profile_image || item.user?.profile_image || item.avatar || item.image || null,
 });
 
 // ─── Service ─────────────────────────────────────────────────────────────────
@@ -181,6 +182,23 @@ export const adminService = {
       prediction_lock_time: payload.predictionLockTime || payload.kickoff,
     });
     return normalizeMatch(res.data);
+  },
+
+  /** PATCH /api/admin/matches/<id>/ */
+  updateMatch: async (id, payload) => {
+    const res = await api.patch(`/admin/matches/${id}/`, {
+      tournament_id: payload.tournamentId,
+      home_team_id: payload.homeTeamId,
+      away_team_id: payload.awayTeamId,
+      kickoff: payload.kickoff,
+      prediction_lock_time: payload.predictionLockTime || payload.kickoff,
+    });
+    return normalizeMatch(res.data);
+  },
+
+  /** DELETE /api/admin/matches/<id>/ */
+  deleteMatch: async (id) => {
+    await api.delete(`/admin/matches/${id}/`);
   },
 
   // ── Score Update ──────────────────────────────────────────────────────────

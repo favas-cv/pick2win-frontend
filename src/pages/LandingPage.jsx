@@ -164,7 +164,7 @@ export const LandingPage = () => {
             <div className="font-bold text-base text-slate-900">
               PRED<span className="text-black">-iT</span>
             </div>
-            <p className="text-[10px] text-slate-400">© 2026 PRED-iT Inc. All rights reserved.</p>
+            <p className="text-[10px] text-slate-400">© 2026 Pick2Win Inc. All rights reserved.</p>
           </div>
 
           <div className="flex gap-6 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
