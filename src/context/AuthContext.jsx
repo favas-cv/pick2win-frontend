@@ -7,6 +7,24 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+
+  const fetchProfile = async (signal = null) => {
+    if (!localStorage.getItem('token')) return null;
+    setLoadingProfile(true);
+    try {
+      const data = await authService.getProfile(signal);
+      setProfile(data);
+      return data;
+    } catch (err) {
+      if (err.name !== 'CanceledError' && err.name !== 'AbortError') {
+        console.error('Failed to fetch profile in AuthContext:', err);
+      }
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
 
   // Rehydrate user from localStorage on mount
   useEffect(() => {
@@ -24,6 +42,21 @@ export const AuthProvider = ({ children }) => {
     }
     setLoading(false);
   }, []);
+
+  // Fetch profile when token is set/changed
+  useEffect(() => {
+    if (!token) {
+      setProfile(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    fetchProfile(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
+  }, [token]);
 
   const applyAuthData = (data) => {
     if (!data?.token) {
@@ -95,6 +128,7 @@ export const AuthProvider = ({ children }) => {
   const confirmLogout = () => {
     setUser(null);
     setToken(null);
+    setProfile(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setShowLogoutModal(false);
@@ -106,7 +140,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user, token, loading,
+      user, token, loading, profile, setProfile, loadingProfile, fetchProfile,
       login, register, registerClubOwner, logout,
     }}>
       {children}

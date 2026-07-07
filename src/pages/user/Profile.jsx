@@ -12,7 +12,7 @@ import { Phone, Award, Calendar, LogOut, History, Camera, Edit3, Save, X, Star, 
 import { getApiErrorMessage } from '../../utils/apiError';
 
 export const Profile = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, profile: globalProfile, setProfile: setGlobalProfile } = useAuth();
   const logoSrc = '/favicon.png';
   const [profile, setProfile] = useState(null);
   const [predictions, setPredictions] = useState([]);
@@ -27,33 +27,49 @@ export const Profile = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const predictionsPerPage = 5;
 
+  // Sync state with globalProfile when loaded or updated
   useEffect(() => {
-    const fetchProfileAndHistory = async () => {
+    if (globalProfile) {
+      setProfile(globalProfile);
+      reset({
+        name: globalProfile.name || '',
+        bio: globalProfile.bio || '',
+        favorite_team: globalProfile.favorite_team?.id || '',
+      });
+    }
+  }, [globalProfile, reset]);
+
+  // Fetch prediction history and teams
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchHistoryAndTeams = async () => {
       setLoading(true);
       try {
-        const [profileData, historyData] = await Promise.all([
-          authService.getProfile(),
-          predictionService.getUserPredictionsHistory()
-        ]);
-        setProfile(profileData);
-        reset({
-          name: profileData.name || '',
-          bio: profileData.bio || '',
-          favorite_team: profileData.favorite_team?.id || '',
-        });
-        setPredictions(historyData);
+        const historyData = await predictionService.getUserPredictionsHistory();
+        if (cancelled) return;
+        // Sort by kickoff descending so the latest match appears first
+        const sorted = Array.isArray(historyData)
+          ? [...historyData].sort((a, b) => new Date(b.matchInfo?.kickoffTime) - new Date(a.matchInfo?.kickoffTime))
+          : historyData;
+        setPredictions(sorted);
         setPredictionPage(1);
-        matchService.getTeams().then(setTeams).catch(() => setTeams([]));
+        
+        const teamsData = await matchService.getTeams();
+        if (!cancelled) setTeams(teamsData);
       } catch (err) {
-        console.error(err);
-        setError(getApiErrorMessage(err, 'Failed to load profile.'));
+        if (!cancelled) {
+          console.error(err);
+          setError(getApiErrorMessage(err, 'Failed to load profile history.'));
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    fetchProfileAndHistory();
-  }, [reset]);
+    fetchHistoryAndTeams();
+    return () => { cancelled = true; };
+  }, []);
 
   if (loading) {
     return (
@@ -64,9 +80,6 @@ export const Profile = () => {
     );
   }
 
-  if (!profile) {
-    return <div className="text-slate-900 text-center py-10">Failed to load profile.</div>;
-  }
 
   const { club } = profile;
   const profileImage = profile.profile_image || user?.profile_image || 'https://api.dicebear.com/7.x/pixel-art/svg';
@@ -99,6 +112,7 @@ export const Profile = () => {
       };
       const updatedProfile = await authService.updateProfile(payload);
       setProfile(updatedProfile);
+      setGlobalProfile(updatedProfile);
       reset({
         name: updatedProfile.name || '',
         bio: updatedProfile.bio || '',
@@ -128,11 +142,11 @@ export const Profile = () => {
     // Requirement 5: Detect unsupported image formats (such as image/heic or image/heif)
     const fileType = (file.type || '').toLowerCase();
     const fileName = (file.name || '').toLowerCase();
-    const isUnsupported = fileType === 'image/heic' || 
-                          fileType === 'image/heif' || 
-                          fileName.endsWith('.heic') || 
-                          fileName.endsWith('.heif');
-    
+    const isUnsupported = fileType === 'image/heic' ||
+      fileType === 'image/heif' ||
+      fileName.endsWith('.heic') ||
+      fileName.endsWith('.heif');
+
     if (isUnsupported) {
       const unsupportedMsg = "The selected image format (HEIC/HEIF) is not supported. Please convert it to a standard format (like JPEG, PNG, or WebP) and try again.";
       setError(unsupportedMsg);
@@ -155,10 +169,12 @@ export const Profile = () => {
     setError('');
     try {
       const data = await authService.uploadProfileImage(file);
-      setProfile((current) => ({
-        ...current,
+      const updated = {
+        ...profile,
         profile_image: data.profile_image,
-      }));
+      };
+      setProfile(updated);
+      setGlobalProfile(updated);
     } catch (err) {
       // Requirement 7: Improve error handling by logging full error, response body, and status code
       console.error("Complete Axios/fetch error during image upload:", err);
@@ -189,7 +205,7 @@ export const Profile = () => {
             <span>{error}</span>
           </div>
         )}
-        
+
         <div className="relative flex flex-col sm:flex-row items-center gap-6">
           <div className="relative p-1.5 rounded-3xl bg-gradient-to-br from-blue-100 via-white to-amber-100 shadow-sm shrink-0">
             <img
@@ -313,7 +329,7 @@ export const Profile = () => {
       {club && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-md shadow-slate-200/50">
           <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.18em] mb-4 border-b border-slate-100 pb-3">Active Club</h3>
-          
+
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 bg-white border border-black/10 rounded-2xl flex items-center justify-center shadow-sm shrink-0">
@@ -328,7 +344,7 @@ export const Profile = () => {
                 <p className="text-xs text-slate-500 font-semibold mt-1">{club.place}</p>
               </div>
             </div>
-            
+
             <div className="text-left sm:text-right space-y-1">
               <span className="text-[10px] bg-[#fffdf2] border border-black/10 text-black px-3 py-1 rounded-xl font-black uppercase tracking-wider block">
                 {club.member_role}
@@ -347,7 +363,7 @@ export const Profile = () => {
           <History className="w-5 h-5 text-sports-gray" />
           <h3 className="text-lg font-black text-slate-900">Prediction History</h3>
         </div>
-        
+
         {predictions.length > 0 ? (
           <>
             <div className="grid grid-cols-1 gap-4">
@@ -380,10 +396,10 @@ export const Profile = () => {
             )}
           </>
         ) : (
-          <EmptyState 
+          <EmptyState
             icon={History}
-            title="No predictions yet" 
-            description="You have not submitted any matchup predictions. Go to the Home dashboard to make predictions!" 
+            title="No predictions yet"
+            description="You have not submitted any matchup predictions. Go to the Home dashboard to make predictions!"
           />
         )}
       </div>

@@ -7,11 +7,12 @@
   --color-dark-800: #FFFFFF;
   --color-dark-700: #E5E7EB;
   --color-dark-600: #6B7280;
-  
-  --color-sports-green: #2563EB; /* Pick2Win Accent Blue */
+
+  --color-sports-green: #2563EB;
+  /* Pick2Win Accent Blue */
   --color-sports-greenLight: #3B82F6;
   --color-sports-greenDark: #1D4ED8;
-  
+
   --color-sports-yellow: #F59E0B;
   --color-sports-red: #DC2626;
   --color-sports-blue: #2563EB;
@@ -19,7 +20,7 @@
   --color-sports-gray: #6B7280;
   --color-sports-border: #E5E7EB;
   --color-sports-card: #FFFFFF;
-  
+
   --color-slate-200: #111827;
   --color-slate-300: #111827;
   --color-slate-350: #111827;
@@ -33,6 +34,7 @@
 
 @utility glass-card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
   &:hover {
     transform: translateY(-2px);
     background: #FFFFFF;
@@ -61,6 +63,11 @@
 
 body {
   background-color: #FAFAFA;
+  background-image: url('./assets/bg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: #111827;
   font-family: 'Outfit', 'Inter', sans-serif;
 }
@@ -70,13 +77,16 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: #FAFAFA;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #E5E7EB;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #D1D5DB;
 }
@@ -91,6 +101,7 @@ body {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

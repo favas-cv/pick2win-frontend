@@ -1,5 +1,6 @@
-import { BookOpen, MessageCircle, Sparkles, Trophy, X } from 'lucide-react';
+import { BookOpen, Sparkles, Trophy, X } from 'lucide-react';
 import { useState } from 'react';
+import wctrophy from '../../assets/wctrophy.png';
 
 export const HowToPlayButton = () => {
   const [open, setOpen] = useState(false);
@@ -9,10 +10,10 @@ export const HowToPlayButton = () => {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 right-4 z-40 flex h-13 w-13 items-center justify-center rounded-2xl border border-black/20 bg-black text-white shadow-xl shadow-black/20 transition active:scale-95 md:bottom-8"
+        className="fixed bottom-24 right-4 z-40 flex h-16 w-16 items-center justify-center transition active:scale-95 md:bottom-8"
         aria-label="How to play"
       >
-        <MessageCircle className="h-6 w-6" />
+        <img src={wctrophy} alt="Trophy" className="h-full w-full object-contain" />
       </button>
 
       {open && (

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import api from '../services/api';
 
 const ClubContext = createContext(null);
 
@@ -12,55 +11,50 @@ const ClubContext = createContext(null);
  * any user who has a club membership is treated as "Approved".
  */
 export const ClubProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const [clubs, setClubs] = useState([]);
   const [activeClub, setActiveClub] = useState(null);
   const [loadingClubs, setLoadingClubs] = useState(false);
 
-  // Fetch user's clubs from backend when user logs in
+  // Parse user's clubs from profile when profile is fetched/updated
   useEffect(() => {
-    if (!user) {
+    if (!user || !profile) {
       setClubs([]);
       setActiveClub(null);
       return;
     }
 
-    const fetchMyClubs = async () => {
-      setLoadingClubs(true);
-      try {
-        let myClubs = [];
-        const response = await api.get('/auth/profile/');
-        if (response.data && response.data.club) {
-          myClubs = [response.data.club];
-        } else if (response.data && response.data.id && !response.data.username) {
-          myClubs = [response.data];
-        } else if (Array.isArray(response.data)) {
-          myClubs = response.data;
-        }
-        const normalizedClubs = myClubs.map((club) => ({
-          ...club,
-        }));
-
-        setClubs(normalizedClubs);
-
-        // Restore previously active club from localStorage, or default to first
-        const savedClubId = localStorage.getItem('activeClubId');
-        const found = savedClubId
-          ? normalizedClubs.find(c => String(c.id) === savedClubId)
-          : null;
-        setActiveClub(found || normalizedClubs[0] || null);
-      } catch (err) {
-        console.warn('Could not fetch clubs:', err?.response?.status);
-        setClubs([]);
-        setActiveClub(null);
-      } finally {
-        setLoadingClubs(false);
+    setLoadingClubs(true);
+    try {
+      let myClubs = [];
+      if (profile.club) {
+        myClubs = [profile.club];
+      } else if (profile.id && !profile.username) {
+        myClubs = [profile];
+      } else if (Array.isArray(profile)) {
+        myClubs = profile;
       }
-    };
+      const normalizedClubs = myClubs.map((club) => ({
+        ...club,
+      }));
 
-    fetchMyClubs();
-  }, [user]);
+      setClubs(normalizedClubs);
+
+      // Restore previously active club from localStorage, or default to first
+      const savedClubId = localStorage.getItem('activeClubId');
+      const found = savedClubId
+        ? normalizedClubs.find(c => String(c.id) === savedClubId)
+        : null;
+      setActiveClub(found || normalizedClubs[0] || null);
+    } catch (err) {
+      console.warn('Could not parse clubs:', err);
+      setClubs([]);
+      setActiveClub(null);
+    } finally {
+      setLoadingClubs(false);
+    }
+  }, [user, profile]);
 
   const switchClub = (clubId) => {
     const found = clubs.find(c => c.id === clubId);

@@ -3,20 +3,20 @@ export const LeaderboardCard = ({ userRank, isCurrentUser, variant = 'row' }) =>
   const numericRank = Number(rank);
   const rankMeta = {
     1: {
-      badge: '🥇',
-      badgeClass: 'bg-amber-100 text-amber-700 border-amber-200',
+      badge: '1',
+      badgeClass: 'bg-amber-100 text-amber-700 border-amber-200 font-extrabold',
       cardClass: 'bg-amber-50/70 border-amber-200 shadow-amber-500/10',
       pillClass: 'bg-amber-500 text-white',
     },
     2: {
-      badge: '🥈',
-      badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+      badge: '2',
+      badgeClass: 'bg-slate-100 text-slate-700 border-slate-200 font-extrabold',
       cardClass: 'bg-slate-50 border-slate-200 shadow-slate-500/10',
       pillClass: 'bg-slate-700 text-white',
     },
     3: {
-      badge: '🥉',
-      badgeClass: 'bg-orange-100 text-orange-700 border-orange-200',
+      badge: '3',
+      badgeClass: 'bg-orange-100 text-orange-700 border-orange-200 font-extrabold',
       cardClass: 'bg-orange-50/70 border-orange-200 shadow-orange-500/10',
       pillClass: 'bg-orange-500 text-white',
     },
@@ -24,8 +24,8 @@ export const LeaderboardCard = ({ userRank, isCurrentUser, variant = 'row' }) =>
   const meta = rankMeta[numericRank] || {
     badge: rank,
     badgeClass: isCurrentUser
-      ? 'bg-black text-white border-blue-600'
-      : 'bg-slate-100 text-slate-700 border-slate-200',
+      ? 'bg-black text-white border-blue-600 font-extrabold'
+      : 'bg-slate-100 text-slate-700 border-slate-200 font-extrabold',
     cardClass: isCurrentUser
       ? 'bg-[#fffdf2] border-black/20 shadow-black/10'
       : 'bg-white border-slate-200 shadow-slate-900/5',
@@ -45,7 +45,7 @@ export const LeaderboardCard = ({ userRank, isCurrentUser, variant = 'row' }) =>
             alt={name}
             className={`${isFirst ? 'h-20 w-20' : 'h-16 w-16'} rounded-full border-4 border-white bg-slate-100 object-cover`}
           />
-          <span className={`absolute -bottom-2 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border-2 border-white text-sm shadow-sm ${meta.badgeClass}`}>
+          <span className={`absolute -top-2 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full border-2 border-white text-xs shadow-sm ${meta.badgeClass}`}>
             {meta.badge}
           </span>
         </div>

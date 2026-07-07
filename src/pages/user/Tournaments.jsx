@@ -10,19 +10,22 @@ export const Tournaments = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchTournaments = async () => {
       setLoading(true);
       try {
         const allTournaments = await matchService.getTournaments();
-        setTournaments(allTournaments);
+        if (!cancelled) setTournaments(allTournaments);
       } catch (err) {
-        console.error(err);
+        if (!cancelled) console.error(err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchTournaments();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) {

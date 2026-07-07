@@ -28,6 +28,8 @@ export const Home = () => {
   const membershipStatus = activeMembership ? activeMembership.status : 'None';
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       setLoading(true);
       setError('');
@@ -36,17 +38,21 @@ export const Home = () => {
           matchService.getMatches(),
           predictionService.getPredictions(),
         ]);
+        if (cancelled) return;
         setMatches(matchesList);
         setPredictions(predictionsList);
       } catch (err) {
-        console.error(err);
-        setError('Failed to load dashboard data. Please check your connection.');
+        if (!cancelled) {
+          console.error(err);
+          setError('Failed to load dashboard data. Please check your connection.');
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchData();
+    return () => { cancelled = true; };
   }, []);
 
   const handlePredictClick = (match) => {
@@ -160,8 +166,10 @@ export const Home = () => {
           scoreB: matchInfo.scoreB,
         },
       };
-    });
-  const recentMatches = matches.filter(isMatchLockedOrStarted);
+    })
+    .sort((a, b) => new Date(b.match.kickoffTime) - new Date(a.match.kickoffTime));
+  const recentMatches = matches.filter(isMatchLockedOrStarted)
+    .sort((a, b) => new Date(b.kickoffTime) - new Date(a.kickoffTime));
 
   const userTotalPredictions = predictions.length;
   const userTotalPoints = predictions.reduce((sum, p) => sum + (p.pointsEarned || 0), 0);

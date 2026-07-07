@@ -44,17 +44,17 @@ const normalizePrediction = (p) => {
     matchInfo: {
       teamA: m.home_team
         ? {
-            name: m.home_team.name,
-            logo: m.home_team.logo ||
-              `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(m.home_team.name)}`,
-          }
+          name: m.home_team.name,
+          logo: m.home_team.logo ||
+            `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(m.home_team.name)}`,
+        }
         : null,
       teamB: m.away_team
         ? {
-            name: m.away_team.name,
-            logo: m.away_team.logo ||
-              `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(m.away_team.name)}`,
-          }
+          name: m.away_team.name,
+          logo: m.away_team.logo ||
+            `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(m.away_team.name)}`,
+        }
         : null,
       kickoffTime: m.kickoff,
       status: matchStatus,
@@ -70,9 +70,11 @@ const normalizePrediction = (p) => {
 };
 
 const cache = {
-  myPredictions: { data: null, timestamp: 0 },
+  myPredictions: { promise: null, data: null, timestamp: 0 },
+  leaderboards: {} // key is `${clubId}_${tournamentId}`, val is { promise, data, timestamp }
 };
-const CACHE_TTL = 30000; // 30 seconds
+const CACHE_TTL_PREDICTIONS = 300000; // 5 minutes
+const CACHE_TTL_LEADERBOARD = 60000;  // 1 minute
 
 // ─── Service ──────────────────────────────────────────────────────────────────
 
@@ -83,14 +85,28 @@ export const predictionService = {
    * Returns the authenticated user's prediction history.
    */
   getPredictions: async (force = false) => {
-    if (!force && cache.myPredictions.data && Date.now() - cache.myPredictions.timestamp < CACHE_TTL) {
-      return cache.myPredictions.data;
+    const now = Date.now();
+    const isFresh = cache.myPredictions.data && (now - cache.myPredictions.timestamp < CACHE_TTL_PREDICTIONS);
+
+    if (!force) {
+      if (isFresh) return cache.myPredictions.data;
+      if (cache.myPredictions.promise) return cache.myPredictions.promise;
     }
-    const response = await api.get('/predictions/my-predictions/');
-    const list = response.data.results ?? response.data;
-    const mapped = list.map(normalizePrediction);
-    cache.myPredictions = { data: mapped, timestamp: Date.now() };
-    return mapped;
+
+    cache.myPredictions.promise = (async () => {
+      try {
+        const response = await api.get('/predictions/my-predictions/');
+        const list = response.data.results ?? response.data;
+        const mapped = list.map(normalizePrediction);
+        cache.myPredictions.data = mapped;
+        cache.myPredictions.timestamp = Date.now();
+        return mapped;
+      } finally {
+        cache.myPredictions.promise = null;
+      }
+    })();
+
+    return cache.myPredictions.promise;
   },
 
   /**
@@ -105,6 +121,7 @@ export const predictionService = {
       away_prediction: parseInt(predictedScoreB),
     });
     cache.myPredictions.timestamp = 0; // invalidate cache
+    cache.leaderboards = {};           // invalidate all leaderboard caches on new prediction
     return normalizePrediction(response.data);
   },
   /**
@@ -117,6 +134,7 @@ export const predictionService = {
       away_prediction: parseInt(predictedScoreB),
     });
     cache.myPredictions.timestamp = 0; // invalidate cache
+    cache.leaderboards = {};           // invalidate all leaderboard caches on prediction update
     return normalizePrediction(response.data);
   },
 
@@ -125,23 +143,56 @@ export const predictionService = {
    * Fetches leaderboard stats for a club/tournament and maps user names.
    */
   getLeaderboard: async (clubId, tournamentId) => {
-    if (!clubId || !tournamentId) return [];
-    try {
-      const response = await api.get(`/leaderboard/${clubId}/${tournamentId}/`);
-      const board = response.data.results ?? response.data;
+    if (clubId == null || tournamentId == null) return [];
 
-      return board.map((item, index) => ({
-        rank: index + 1,
-        userId: item.user?.id ?? item.user,
-        name: item.name || item.username || item.user?.name || `Predictor ${item.user?.id ?? item.user}`,
-        points: item.total_points,
-        accuracy: 100, // Default display value
-        avatar: item.profile_image || item.user?.profile_image || item.avatar || item.image || null,
-      }));
-    } catch (err) {
-      console.error('Leaderboard fetch failed:', err);
-      return [];
+    const key = `${clubId}_${tournamentId}`;
+    const now = Date.now();
+    const cached = cache.leaderboards[key];
+    const isFresh = cached && cached.data && (now - cached.timestamp < CACHE_TTL_LEADERBOARD);
+
+    if (isFresh) {
+      return cached.data;
     }
+    if (cached && cached.promise) {
+      return cached.promise;
+    }
+
+    if (!cache.leaderboards[key]) {
+      cache.leaderboards[key] = { promise: null, data: null, timestamp: 0 };
+    }
+
+    cache.leaderboards[key].promise = (async () => {
+      try {
+        const response = await api.get(`/leaderboard/${clubId}/${tournamentId}/`);
+        const board = response.data.results ?? response.data;
+
+        const mapped = board.map((item, index) => ({
+          rank: index + 1,
+          userId: item.user?.id ?? item.user,
+          name: item.name || item.username || item.user?.name || `Predictor ${item.user?.id ?? item.user}`,
+          points: item.total_points,
+          accuracy: 100, // Default display value
+          avatar: item.profile_image || item.user?.profile_image || item.avatar || item.image || null,
+        }));
+        if (cache.leaderboards[key]) {
+          cache.leaderboards[key].data = mapped;
+          cache.leaderboards[key].timestamp = Date.now();
+        }
+        return mapped;
+      } catch (err) {
+        console.error('Leaderboard fetch failed:', err);
+        if (cache.leaderboards[key]) {
+          cache.leaderboards[key].promise = null;
+        }
+        return [];
+      } finally {
+        if (cache.leaderboards[key]) {
+          cache.leaderboards[key].promise = null;
+        }
+      }
+    })();
+
+    return cache.leaderboards[key].promise;
   },
 
   getUserPredictionsHistory: async () => {

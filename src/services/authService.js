@@ -27,8 +27,8 @@ export const authService = {
     return response.data;
   },
 
-  getProfile: async () => {
-    const response = await api.get('/auth/profile/');
+  getProfile: async (signal = null) => {
+    const response = await api.get('/auth/profile/', { signal });
     return response.data;
   },
 

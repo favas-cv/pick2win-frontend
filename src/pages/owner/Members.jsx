@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useClub } from '../../context/ClubContext';
 import { clubService } from '../../services/clubService';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
@@ -11,18 +11,26 @@ export const Members = () => {
   const [activeTab, setActiveTab] = useState('pending'); // 'pending' | 'approved' | 'suspended'
   const [clubMembers, setClubMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [selectedMember, setSelectedMember] = useState(null);
   const [actionType, setActionType] = useState(''); // 'approve' | 'reject' | 'suspend' | 'activate'
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const lastFetchedClubId = useRef(null);
 
   useEffect(() => {
     const fetchMembers = async () => {
       if (!activeClub) return;
+      // Prevent double-call when effect fires multiple times for the same club
+      if (lastFetchedClubId.current === activeClub.id) return;
+      lastFetchedClubId.current = activeClub.id;
       setLoading(true);
       try {
         const data = await clubService.getClubMembers(activeClub.id);
-        setClubMembers(Array.isArray(data) ? data : data.members || []);
+        const members = Array.isArray(data) ? data : data.members || [];
+        // Sort by joined_at descending — most recently joined first
+        const sorted = [...members].sort(
+          (a, b) => new Date(b.joined_at) - new Date(a.joined_at)
+        );
+        setClubMembers(sorted);
       } catch (err) {
         console.error('Failed to fetch members:', err);
       } finally {

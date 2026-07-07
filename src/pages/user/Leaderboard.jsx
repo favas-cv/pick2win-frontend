@@ -17,31 +17,62 @@ export const Leaderboard = () => {
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Effect 1: Fetch tournaments on mount
   useEffect(() => {
-    const fetchTournamentsAndLeaderboard = async () => {
-      setLoading(true);
+    let cancelled = false;
+
+    const fetchTournaments = async () => {
       try {
         const allTournaments = await matchService.getTournaments();
+        if (cancelled) return;
         setTournaments(allTournaments);
-
-        let tId = selectedTournament;
-        if (!tId && allTournaments.length > 0) {
-          tId = allTournaments[0].id;
+        if (allTournaments.length > 0 && !selectedTournament) {
           setSelectedTournament(allTournaments[0].id);
-        }
-
-        if (tId && activeClub) {
-          const ranking = await predictionService.getLeaderboard(activeClub.id, tId);
-          setBoard(ranking);
+        } else if (allTournaments.length === 0) {
+          setLoading(false);
         }
       } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+        if (!cancelled) {
+          console.error(err);
+          setLoading(false);
+        }
       }
     };
 
-    fetchTournamentsAndLeaderboard();
+    fetchTournaments();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Effect 2: Fetch leaderboard when activeClub or selectedTournament changes
+  useEffect(() => {
+    if (!activeClub || !selectedTournament) return;
+
+    let cancelled = false;
+
+    const fetchLeaderboard = async () => {
+      setLoading(true);
+      try {
+        const ranking = await predictionService.getLeaderboard(activeClub.id, selectedTournament);
+        if (!cancelled) {
+          setBoard(ranking);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error(err);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchLeaderboard();
+    return () => {
+      cancelled = true;
+    };
   }, [activeClub, selectedTournament]);
 
   if (loading) {

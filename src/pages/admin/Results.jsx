@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import EmptyState from '../../components/common/EmptyState';
-import { CheckSquare, Save, AlertCircle, CheckCircle } from 'lucide-react';
+import { CheckSquare, Save, AlertCircle, CheckCircle, AlertTriangle, X } from 'lucide-react';
 
 const statusStyle = (status) => {
   switch (status) {
@@ -22,6 +22,7 @@ export const Results = () => {
   const [saving, setSaving] = useState({});
   const [toast, setToast] = useState('');
   const [error, setError] = useState('');
+  const [confirmMatch, setConfirmMatch] = useState(null); // match object pending confirmation
 
   const fetchMatches = async () => {
     setLoading(true);
@@ -215,7 +216,7 @@ export const Results = () => {
 
                   {!match.isFinished && (
                     <button
-                      onClick={() => handleVerify(match.id)}
+                      onClick={() => setConfirmMatch(match)}
                       disabled={isSaving}
                       className="bg-sports-green hover:bg-sports-greenDark disabled:opacity-60 text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 active:scale-95 shadow-md shadow-sports-green/5"
                     >
@@ -240,6 +241,63 @@ export const Results = () => {
           title="No Matches Found"
           description="No matches have been scheduled yet. Create fixtures in the Match Governance page first."
         />
+      )}
+
+      {/* ── Danger Confirmation Modal ─────────────────────────────────────── */}
+      {confirmMatch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-5 border border-red-200">
+            {/* Icon + title */}
+            <div className="flex items-start gap-4">
+              <div className="shrink-0 w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-slate-900">Confirm Final Score</h3>
+                <p className="text-xs text-slate-500 mt-0.5 font-semibold">
+                  {confirmMatch.homeTeam?.name ?? 'Home'}
+                  {' '}<span className="font-black text-slate-900">
+                    {scores[confirmMatch.id]?.homeScore ?? '?'} – {scores[confirmMatch.id]?.awayScore ?? '?'}
+                  </span>{' '}
+                  {confirmMatch.awayTeam?.name ?? 'Away'}
+                </p>
+              </div>
+            </div>
+
+            {/* Warning message */}
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-4 space-y-2">
+              <p className="text-xs font-black text-red-600 uppercase tracking-wide flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> This action cannot be undone
+              </p>
+              <p className="text-xs text-red-700 leading-relaxed">
+                Once verified, <strong>the score is locked permanently</strong>. Editing it afterwards will corrupt the database and break the points calculation system for all predictions on this match.
+              </p>
+              <p className="text-xs text-red-600 font-semibold mt-1">
+                ⚠️ Please double-check the score before confirming.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={() => setConfirmMatch(null)}
+                className="flex-1 border border-slate-200 rounded-xl py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition flex items-center justify-center gap-1.5"
+              >
+                <X className="w-4 h-4" /> Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const id = confirmMatch.id;
+                  setConfirmMatch(null);
+                  handleVerify(id);
+                }}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2.5 text-xs font-black transition flex items-center justify-center gap-1.5 shadow-md shadow-red-500/20"
+              >
+                <Save className="w-4 h-4" /> Yes, Lock This Score
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

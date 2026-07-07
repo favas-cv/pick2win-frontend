@@ -20,12 +20,17 @@ export const UserLayout = () => {
   }
 
   if (user.role !== 'user' && user.role !== 'club_admin') {
-    if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
-    if (user.role === 'club_owner') return <Navigate to="/owner/dashboard" replace />;
+    if (user.role === 'admin') {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
+
+    if (user.role === 'club_owner') {
+      return <Navigate to="/owner/dashboard" replace />;
+    }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent text-slate-900 flex flex-col font-sans">
       <Navbar />
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 pt-20 pb-24 md:pb-8">
         <div className="page-transition">

@@ -16,12 +16,12 @@ export const TournamentDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const { activeClub, memberships } = useClub();
-  
+
   const [tournament, setTournament] = useState(null);
   const [matches, setMatches] = useState([]);
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('matches'); 
+  const [activeTab, setActiveTab] = useState('matches');
 
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,10 +39,10 @@ export const TournamentDetails = () => {
           matchService.getMatches({ tournamentId: id }),
           predictionService.getPredictions()
         ]);
-        
+
         setTournament(details);
         setMatches(allMatches);
-        
+
         const filteredPreds = allPredictions.filter(p =>
           allMatches.some(m => m.id === p.matchId)
         );
@@ -108,8 +108,8 @@ export const TournamentDetails = () => {
   return (
     <div className="space-y-6">
       <div>
-        <Link 
-          to="/user/tournaments" 
+        <Link
+          to="/user/tournaments"
           className="inline-flex items-center gap-1 text-xs font-bold text-sports-gray hover:text-slate-900 transition"
         >
           <ChevronLeft className="w-4 h-4" /> Back to Tournaments
@@ -134,7 +134,7 @@ export const TournamentDetails = () => {
           <p className="text-xs text-sports-gray leading-relaxed max-w-2xl font-semibold">{tournament.description}</p>
           <div className="flex items-center gap-4 text-[10px] text-sports-gray font-bold uppercase tracking-wider">
             <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-black" /> 
+              <Calendar className="w-3.5 h-3.5 text-black" />
               {new Date(tournament.startDate).toLocaleDateString()} - {new Date(tournament.endDate).toLocaleDateString()}
             </span>
           </div>
@@ -144,18 +144,16 @@ export const TournamentDetails = () => {
       <div className="border-b border-slate-200 flex gap-6 text-sm font-bold">
         <button
           onClick={() => setActiveTab('matches')}
-          className={`pb-3 transition relative ${
-            activeTab === 'matches' ? 'text-black' : 'text-slate-400 hover:text-slate-900'
-          }`}
+          className={`pb-3 transition relative ${activeTab === 'matches' ? 'text-black' : 'text-slate-400 hover:text-slate-900'
+            }`}
         >
           Matches
           {activeTab === 'matches' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
         </button>
         <button
           onClick={() => setActiveTab('predictions')}
-          className={`pb-3 transition relative ${
-            activeTab === 'predictions' ? 'text-black' : 'text-slate-400 hover:text-slate-900'
-          }`}
+          className={`pb-3 transition relative ${activeTab === 'predictions' ? 'text-black' : 'text-slate-400 hover:text-slate-900'
+            }`}
         >
           My Predictions ({predictions.length})
           {activeTab === 'predictions' && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"></span>}
@@ -189,10 +187,10 @@ export const TournamentDetails = () => {
               ))}
             </div>
           ) : (
-            <EmptyState 
+            <EmptyState
               icon={AlignLeft}
-              title="No predictions submitted" 
-              description="You have not predicted any matchups for this tournament yet. Submit score guesses." 
+              title="No predictions submitted"
+              description="You have not predicted any matchups for this tournament yet. Submit score guesses."
             />
           )
         )}

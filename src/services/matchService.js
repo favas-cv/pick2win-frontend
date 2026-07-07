@@ -78,11 +78,13 @@ const normalizeMatch = (m) => {
 };
 
 const cache = {
-  tournaments: { data: null, timestamp: 0 },
-  matches: { data: null, timestamp: 0 },
-  teams: { data: null, timestamp: 0 }
+  tournaments: { promise: null, data: null, timestamp: 0 },
+  teams: { promise: null, data: null, timestamp: 0 },
+  matches: { promise: null, data: null, timestamp: 0 }
 };
-const CACHE_TTL = 30000; // 30 seconds
+const CACHE_TTL_TOURNAMENTS = 600000; // 10 minutes
+const CACHE_TTL_TEAMS = 600000;       // 10 minutes
+const CACHE_TTL_MATCHES = 300000;     // 5 minutes
 
 // ─── Service ─────────────────────────────────────────────────────────────────
 
@@ -90,14 +92,28 @@ export const matchService = {
 
   /** GET /api/tournaments/tournaments/ */
   getTournaments: async (force = false) => {
-    if (!force && cache.tournaments.data && Date.now() - cache.tournaments.timestamp < CACHE_TTL) {
-      return cache.tournaments.data;
+    const now = Date.now();
+    const isFresh = cache.tournaments.data && (now - cache.tournaments.timestamp < CACHE_TTL_TOURNAMENTS);
+
+    if (!force) {
+      if (isFresh) return cache.tournaments.data;
+      if (cache.tournaments.promise) return cache.tournaments.promise;
     }
-    const response = await api.get('/tournaments/tournaments/');
-    const list = response.data.results ?? response.data;
-    const mapped = list.map(normalizeTournament);
-    cache.tournaments = { data: mapped, timestamp: Date.now() };
-    return mapped;
+
+    cache.tournaments.promise = (async () => {
+      try {
+        const response = await api.get('/tournaments/tournaments/');
+        const list = response.data.results ?? response.data;
+        const mapped = list.map(normalizeTournament);
+        cache.tournaments.data = mapped;
+        cache.tournaments.timestamp = Date.now();
+        return mapped;
+      } finally {
+        cache.tournaments.promise = null;
+      }
+    })();
+
+    return cache.tournaments.promise;
   },
 
   /** GET /api/tournaments/tournaments/<id>/ */
@@ -115,14 +131,28 @@ export const matchService = {
 
   /** GET /api/tournaments/teams/ */
   getTeams: async (force = false) => {
-    if (!force && cache.teams.data && Date.now() - cache.teams.timestamp < CACHE_TTL) {
-      return cache.teams.data;
+    const now = Date.now();
+    const isFresh = cache.teams.data && (now - cache.teams.timestamp < CACHE_TTL_TEAMS);
+
+    if (!force) {
+      if (isFresh) return cache.teams.data;
+      if (cache.teams.promise) return cache.teams.promise;
     }
-    const response = await api.get('/tournaments/teams/');
-    const list = response.data.results ?? response.data;
-    const mapped = list.map(normalizeTeam);
-    cache.teams = { data: mapped, timestamp: Date.now() };
-    return mapped;
+
+    cache.teams.promise = (async () => {
+      try {
+        const response = await api.get('/tournaments/teams/');
+        const list = response.data.results ?? response.data;
+        const mapped = list.map(normalizeTeam);
+        cache.teams.data = mapped;
+        cache.teams.timestamp = Date.now();
+        return mapped;
+      } finally {
+        cache.teams.promise = null;
+      }
+    })();
+
+    return cache.teams.promise;
   },
 
   /** POST /api/tournaments/teams/ — admin only */
@@ -135,24 +165,42 @@ export const matchService = {
   /**
    * GET /api/matches/matches/
    * Optional filters: { tournamentId, status }
+   * Always fetches full list, caches it, then filters in-memory.
    */
   getMatches: async (filters = {}, force = false) => {
-    const hasFilters = Object.keys(filters).length > 0;
-    if (!hasFilters && !force && cache.matches.data && Date.now() - cache.matches.timestamp < CACHE_TTL) {
-      return cache.matches.data;
+    const now = Date.now();
+    const isFresh = cache.matches.data && (now - cache.matches.timestamp < CACHE_TTL_MATCHES);
+
+    let allMatches;
+    if (!force && isFresh) {
+      allMatches = cache.matches.data;
+    } else if (!force && cache.matches.promise) {
+      allMatches = await cache.matches.promise;
+    } else {
+      cache.matches.promise = (async () => {
+        try {
+          const response = await api.get('/matches/matches/');
+          const list = response.data.results ?? response.data;
+          const mapped = list.map(normalizeMatch);
+          cache.matches.data = mapped;
+          cache.matches.timestamp = Date.now();
+          return mapped;
+        } finally {
+          cache.matches.promise = null;
+        }
+      })();
+      allMatches = await cache.matches.promise;
     }
 
-    const params = {};
-    if (filters.tournamentId) params.tournament = filters.tournamentId;
-    if (filters.status) params.status = filters.status;
-    const response = await api.get('/matches/matches/', { params });
-    const list = response.data.results ?? response.data;
-    const mapped = list.map(normalizeMatch);
-
-    if (!hasFilters) {
-      cache.matches = { data: mapped, timestamp: Date.now() };
+    // Filter in-memory
+    let filtered = allMatches;
+    if (filters.tournamentId) {
+      filtered = filtered.filter(m => m.tournamentId === Number(filters.tournamentId));
     }
-    return mapped;
+    if (filters.status) {
+      filtered = filtered.filter(m => m.status === filters.status);
+    }
+    return filtered;
   },
 
   /** POST /api/matches/matches/ — admin only */
