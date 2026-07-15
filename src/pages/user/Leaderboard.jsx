@@ -115,7 +115,10 @@ export const Leaderboard = () => {
           />
 
           {topThree.length > 0 && (
-            <div className="rounded-[28px] border border-slate-200 bg-white px-3 pb-5 pt-7 shadow-lg shadow-slate-900/5">
+            <div className="relative rounded-[28px] border border-amber-300 bg-gradient-to-br from-[#fffbeb] via-white to-[#fef3c7] px-3 pb-5 pt-7 shadow-lg shadow-amber-200/60 overflow-hidden">
+              {/* Golden top bar — same as Final match card */}
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300" />
+
               <div className="flex items-start justify-center gap-2">
                 {topThree.map((userRank) => (
                   <LeaderboardCard

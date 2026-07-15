@@ -257,6 +257,7 @@ export const Home = () => {
                   match={match}
                   onPredict={handlePredictClick}
                   userPrediction={predictions.find(p => p.matchId === match.id)}
+                  roundLabel="Final"
                 />
               ))}
             </div>

@@ -75,9 +75,6 @@ export const PredictionModal = ({ isOpen, match, onClose, onSubmit, initialPredi
             </div>
           </div>
 
-          <div className="text-center text-[10px] font-black text-red-500 bg-red-500/10 border border-red-500/20 py-2 rounded-xl uppercase tracking-wider">
-            Draw not possible because this is a knockout match
-          </div>
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button

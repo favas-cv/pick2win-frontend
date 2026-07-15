@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Lock, Radio, ShieldCheck } from 'lucide-react';
+import { Lock, Radio, ShieldCheck, Trophy } from 'lucide-react';
 
-export const MatchCard = ({ match, onPredict, userPrediction }) => {
+export const MatchCard = ({ match, onPredict, userPrediction, roundLabel }) => {
   const { tournamentName, teamA, teamB, kickoffTime, predictionLockTime, status } = match;
+  const isFinal = roundLabel?.toLowerCase() === 'final';
 
   const [now, setNow] = useState(() => new Date());
   const kickoffDate = useMemo(() => new Date(kickoffTime), [kickoffTime]);
@@ -39,9 +40,17 @@ export const MatchCard = ({ match, onPredict, userPrediction }) => {
     });
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-xl hover:shadow-black/10 transition duration-300 flex flex-col justify-between relative group overflow-hidden">
-      {/* Decorative gradient header */}
-      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-black/30 to-transparent"></div>
+    <div className={`border rounded-3xl p-4 sm:p-5 hover:-translate-y-0.5 hover:shadow-xl transition duration-300 flex flex-col justify-between relative group overflow-hidden ${
+      isFinal
+        ? 'bg-gradient-to-br from-[#fffbeb] via-white to-[#fef3c7] border-amber-300 hover:border-amber-400 hover:shadow-amber-200/60 animate-golden-pulse'
+        : 'bg-white border-slate-200 hover:border-black/20 hover:shadow-black/10'
+    }`}>
+      {/* Decorative top bar */}
+      <div className={`absolute top-0 left-0 right-0 h-[3px] ${
+        isFinal
+          ? 'bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300'
+          : 'bg-gradient-to-r from-transparent via-black/30 to-transparent'
+      }`}></div>
 
       {/* Header Info */}
       <div className="flex justify-between items-start gap-3 mb-4 text-[11px] font-bold text-slate-500">
@@ -77,7 +86,11 @@ export const MatchCard = ({ match, onPredict, userPrediction }) => {
       </div>
 
       {/* Teams Score Section */}
-      <div className="flex items-center justify-between gap-3 sm:gap-4 py-5 my-1 rounded-3xl bg-gradient-to-br from-slate-50 via-white to-[#fffdf2] border border-slate-100 shadow-inner">
+      <div className={`flex items-center justify-between gap-3 sm:gap-4 py-5 my-1 rounded-3xl border shadow-inner ${
+        isFinal
+          ? 'bg-gradient-to-br from-amber-50 via-white to-yellow-50 border-amber-100'
+          : 'bg-gradient-to-br from-slate-50 via-white to-[#fffdf2] border-slate-100'
+      }`}>
         {/* Team A */}
         <div className="flex-1 flex flex-col items-center text-center min-w-0">
           <div className="w-16 h-16 sm:w-[68px] sm:h-[68px] rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 border border-white shadow-lg shadow-slate-200/70 ring-1 ring-slate-200/80 flex items-center justify-center">
@@ -92,7 +105,19 @@ export const MatchCard = ({ match, onPredict, userPrediction }) => {
 
         {/* VS / Score Panel */}
         <div className="flex flex-col items-center justify-center min-w-[68px] sm:min-w-[78px]">
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-1">
+            {roundLabel && (
+              isFinal ? (
+                <span className="flex items-center gap-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-white px-2.5 py-0.5 rounded-lg tracking-wide uppercase text-[9px] font-extrabold mb-1 shadow-md shadow-amber-400/40">
+                  <Trophy className="w-2.5 h-2.5" />
+                  {roundLabel}
+                </span>
+              ) : (
+                <span className="bg-black text-white px-2 py-0.5 rounded-lg tracking-wide uppercase text-[9px] font-extrabold mb-1">
+                  {roundLabel}
+                </span>
+              )
+            )}
             {status === 'Live' || status === 'Completed' ? (
               <div className="flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-2xl font-extrabold text-xl text-slate-900 shadow-inner">
                 <span>{match.scoreA ?? 0}</span>
@@ -107,6 +132,9 @@ export const MatchCard = ({ match, onPredict, userPrediction }) => {
             <div className="mt-2 text-center">
               <span className="block text-[12px] sm:text-sm font-black tabular-nums tracking-[0.14em] text-slate-900">
                 {formatKickoffTime(kickoffDate)}
+              </span>
+              <span className="block text-[9px] text-slate-400 font-semibold mt-0.5">
+                {kickoffDate.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
               </span>
             </div>
           </div>
