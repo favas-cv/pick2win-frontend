@@ -159,12 +159,12 @@ export const Results = () => {
                     Kickoff:{' '}
                     {match.kickoff
                       ? new Date(match.kickoff).toLocaleString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
                       : '—'}
                   </span>
                 </div>

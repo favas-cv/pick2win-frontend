@@ -4,6 +4,7 @@ import { Lock, Radio, ShieldCheck, Trophy } from 'lucide-react';
 export const MatchCard = ({ match, onPredict, userPrediction, roundLabel }) => {
   const { tournamentName, teamA, teamB, kickoffTime, predictionLockTime, status } = match;
   const isFinal = roundLabel?.toLowerCase() === 'final';
+  const isThirdPlace = roundLabel?.toLowerCase() === 'third-place play-off' || roundLabel?.toLowerCase() === 'losers-final';
 
   const [now, setNow] = useState(() => new Date());
   const kickoffDate = useMemo(() => new Date(kickoffTime), [kickoffTime]);
@@ -43,12 +44,16 @@ export const MatchCard = ({ match, onPredict, userPrediction, roundLabel }) => {
     <div className={`border rounded-3xl p-4 sm:p-5 hover:-translate-y-0.5 hover:shadow-xl transition duration-300 flex flex-col justify-between relative group overflow-hidden ${
       isFinal
         ? 'bg-gradient-to-br from-[#fffbeb] via-white to-[#fef3c7] border-amber-300 hover:border-amber-400 hover:shadow-amber-200/60 animate-golden-pulse'
+        : isThirdPlace
+        ? 'bg-slate-50 border-slate-300 hover:border-slate-400 hover:shadow-slate-200/50'
         : 'bg-white border-slate-200 hover:border-black/20 hover:shadow-black/10'
     }`}>
       {/* Decorative top bar */}
       <div className={`absolute top-0 left-0 right-0 h-[3px] ${
         isFinal
           ? 'bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300'
+          : isThirdPlace
+          ? 'bg-gradient-to-r from-slate-300 via-slate-400 to-slate-300'
           : 'bg-gradient-to-r from-transparent via-black/30 to-transparent'
       }`}></div>
 
@@ -89,6 +94,8 @@ export const MatchCard = ({ match, onPredict, userPrediction, roundLabel }) => {
       <div className={`flex items-center justify-between gap-3 sm:gap-4 py-5 my-1 rounded-3xl border shadow-inner ${
         isFinal
           ? 'bg-gradient-to-br from-amber-50 via-white to-yellow-50 border-amber-100'
+          : isThirdPlace
+          ? 'bg-white border-slate-200'
           : 'bg-gradient-to-br from-slate-50 via-white to-[#fffdf2] border-slate-100'
       }`}>
         {/* Team A */}
@@ -110,6 +117,10 @@ export const MatchCard = ({ match, onPredict, userPrediction, roundLabel }) => {
               isFinal ? (
                 <span className="flex items-center gap-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-white px-2.5 py-0.5 rounded-lg tracking-wide uppercase text-[9px] font-extrabold mb-1 shadow-md shadow-amber-400/40">
                   <Trophy className="w-2.5 h-2.5" />
+                  {roundLabel}
+                </span>
+              ) : isThirdPlace ? (
+                <span className="flex items-center gap-1 bg-slate-600 text-white px-2.5 py-0.5 rounded-lg tracking-wide uppercase text-[9px] font-extrabold mb-1 shadow-sm">
                   {roundLabel}
                 </span>
               ) : (

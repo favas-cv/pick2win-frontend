@@ -257,7 +257,7 @@ export const Home = () => {
                   match={match}
                   onPredict={handlePredictClick}
                   userPrediction={predictions.find(p => p.matchId === match.id)}
-                  roundLabel="Final"
+                  roundLabel={match.id === 15 ? "Final" : match.id === 16 ? "Third-Place Play-off" : undefined}
                 />
               ))}
             </div>
